@@ -1,0 +1,2747 @@
+<!DOCTYPE html>
+<html lang="vi" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#090d16" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <title>ActionLock Free — AL-01 Exercise to Unlock Screen Time</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700;800&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          },
+          colors: {
+            cyber: {
+              bg: '#090d16',
+              card: '#111827',
+              border: '#1f2937',
+              neon: '#00f5d4',
+              lime: '#a3e635',
+              amber: '#f59e0b',
+              crimson: '#f43f5e',
+              purple: '#a855f7',
+              blue: '#38bdf8'
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    body {
+      font-family: 'Inter', sans-serif;
+      transition: background-color 0.25s ease, color 0.25s ease;
+      overflow-x: hidden;
+    }
+    .font-mono-tech { font-family: 'JetBrains Mono', monospace; }
+    .cyber-grid {
+      background-image: radial-gradient(rgba(0, 245, 212, 0.08) 1px, transparent 1px);
+      background-size: 20px 20px;
+    }
+    .light .cyber-grid {
+      background-image: radial-gradient(rgba(15, 23, 42, 0.06) 1px, transparent 1px);
+      background-size: 20px 20px;
+    }
+    .neon-glow {
+      box-shadow: 0 0 20px rgba(0, 245, 212, 0.22), inset 0 0 12px rgba(0, 245, 212, 0.08);
+    }
+    .crimson-glow {
+      box-shadow: 0 0 25px rgba(244, 63, 94, 0.35), inset 0 0 15px rgba(244, 63, 94, 0.15);
+    }
+    @keyframes pulseRing {
+      0% { transform: scale(0.95); opacity: 0.8; }
+      50% { transform: scale(1.04); opacity: 1; }
+      100% { transform: scale(0.95); opacity: 0.8; }
+    }
+    .animate-pulse-ring { animation: pulseRing 2.2s infinite ease-in-out; }
+    @keyframes floatHero {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-6px); }
+    }
+    .animate-hero { animation: floatHero 3s ease-in-out infinite; }
+    @keyframes scanline {
+      0% { top: 5%; }
+      50% { top: 90%; }
+      100% { top: 5%; }
+    }
+    .scanline-bar {
+      position: absolute;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, #00f5d4, transparent);
+      box-shadow: 0 0 10px #00f5d4;
+      animation: scanline 3.2s ease-in-out infinite;
+      pointer-events: none;
+    }
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(148, 163, 184, 0.3); border-radius: 9999px; }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 cyber-grid min-h-screen flex flex-col selection:bg-teal-400 selection:text-slate-950">
+
+  <!-- TOP SYSTEM STATUS BAR -->
+  <header class="sticky top-0 z-30 backdrop-blur-xl bg-slate-950/90 dark:bg-slate-950/90 border-b border-slate-800/80 px-3 sm:px-6 py-2.5">
+    <div class="max-w-6xl mx-auto flex flex-wrap items-center justify-between gap-2">
+      <!-- Brand Identity -->
+      <div class="flex items-center gap-2.5">
+        <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-teal-400 via-emerald-400 to-cyan-500 flex items-center justify-center text-slate-950 font-black text-base shadow-lg shadow-teal-500/20">
+          AL
+        </div>
+        <div>
+          <div class="flex items-center gap-1.5">
+            <span class="font-extrabold tracking-tight text-base sm:text-lg text-white dark:text-white light-title">ActionLock</span>
+            <span class="text-[10px] font-mono-tech uppercase px-1.5 py-0.5 rounded bg-teal-500/20 text-teal-300 border border-teal-500/40 font-bold">PRO FREE</span>
+          </div>
+          <div class="flex items-center gap-2 text-[11px] font-mono-tech text-slate-400">
+            <span class="inline-flex items-center gap-1 text-emerald-400">
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span>
+              <span id="sysStatusText">AL-01 ONLINE</span>
+            </span>
+            <span>•</span>
+            <span id="headerLockedCount">6 Apps Locked</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Status Pills & Controls -->
+      <div class="flex items-center flex-wrap gap-1.5 sm:gap-2">
+        <!-- Time Bank Pill -->
+        <button id="btnOpenTimeBank" onclick="openTimeBankModal()" class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-700/80 text-xs font-mono-tech transition" title="Quỹ thời gian màn hình đã tích lũy">
+          <span class="text-cyan-400">⏱️</span>
+          <span id="headerTimeBank" class="font-bold text-cyan-300">45p</span>
+        </button>
+
+        <!-- Coins Pill -->
+        <button id="btnHeaderCoins" onclick="switchTab('rpg')" class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-700/80 text-xs font-mono-tech transition" title="Xu Hành Động (Mở khóa Skin miễn phí)">
+          <span>🪙</span>
+          <span id="headerCoins" class="font-bold text-amber-300">320</span>
+        </button>
+
+        <!-- Streak Pill -->
+        <button id="btnHeaderStreak" onclick="switchTab('quests')" class="flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-700/80 text-xs font-mono-tech transition" title="Chuỗi ngày tập luyện liên tiếp">
+          <span>🔥</span>
+          <span id="headerStreak" class="font-bold text-orange-400">5</span>
+        </button>
+
+        <!-- Sound Toggle -->
+        <button id="btnToggleSound" onclick="toggleSound()" class="p-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-700/80 text-xs transition" title="Bật/Tắt âm thanh">
+          <span id="soundIcon">🔊</span>
+        </button>
+
+        <!-- Theme Toggle -->
+        <button id="btnToggleTheme" onclick="toggleTheme()" class="p-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-700/80 text-xs transition" title="Đổi giao diện Sáng / Tối">
+          <span id="themeIcon">🌙</span>
+        </button>
+
+        <!-- Language Toggle -->
+        <button id="btnToggleLang" onclick="toggleLanguage()" class="px-2 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-700/80 text-xs font-mono-tech font-bold text-teal-300 transition">
+          <span id="langLabel">VI</span>
+        </button>
+
+        <!-- APK / Install Guide Button -->
+        <button id="btnOpenApkGuide" onclick="openApkModal()" class="px-2.5 py-1.5 rounded-lg bg-gradient-to-r from-teal-500 to-emerald-500 hover:from-teal-400 hover:to-emerald-400 text-slate-950 font-bold text-xs flex items-center gap-1 shadow-md shadow-teal-500/20 transition">
+          <span>📲</span>
+          <span id="apkBtnLabel" class="hidden sm:inline">Cài APK / App</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN CONTENT CONTAINER -->
+  <main class="flex-1 max-w-6xl w-full mx-auto px-3 sm:px-6 pt-4 pb-24">
+
+    <!-- HERO / 3-STEP PROTOCOL BANNER -->
+    <section class="mb-5 rounded-2xl bg-gradient-to-r from-slate-900 via-slate-900/95 to-teal-950/60 border border-slate-800 p-4 sm:p-5 relative overflow-hidden">
+      <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+        <div class="space-y-1.5 max-w-2xl">
+          <div class="inline-flex items-center gap-2 text-[11px] font-mono-tech uppercase tracking-wider text-teal-400 bg-teal-500/10 px-2.5 py-0.5 rounded-full border border-teal-500/30">
+            <span>BEHAVIOR CONTROL SYSTEM // AL-01</span>
+            <span>•</span>
+            <span id="heroSubBadge">MỞ KHÓA 100% TÍNH NĂNG PREMIUM</span>
+          </div>
+          <h1 id="heroTitle" class="text-xl sm:text-2xl font-black tracking-tight text-white">
+            Đổi Thời Gian Lướt Vô Thức Lấy Vận Động &amp; Kỷ Luật
+          </h1>
+          <p id="heroDesc" class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+            Thay vì mở TikTok, Instagram hay YouTube theo quán tính, ActionLock chặn ngay khoảnh khắc xao nhãng: hoàn thành một hiệp <strong>Hít đất, Squat, Gập bụng hoặc Chùng chân</strong> với AI đếm nhịp tự động để nhận <strong>15–120 phút</strong> mở khóa, điểm XP và thăng cấp nhân vật!
+          </p>
+        </div>
+
+        <!-- 3-Step Mini Status Cards -->
+        <div class="grid grid-cols-3 gap-2 sm:gap-3 shrink-0">
+          <div class="p-2.5 rounded-xl bg-slate-950/80 border border-rose-500/30 text-center">
+            <div class="text-[10px] font-mono-tech text-rose-400 font-bold">01 / RESTRICT</div>
+            <div id="step1Title" class="text-xs font-bold text-white mt-0.5">Khóa App</div>
+            <div class="text-[10px] font-mono-tech text-slate-400 mt-0.5">STATE: CONTROLLED</div>
+          </div>
+          <div class="p-2.5 rounded-xl bg-slate-950/80 border border-teal-500/30 text-center">
+            <div class="text-[10px] font-mono-tech text-teal-400 font-bold">02 / MOVE</div>
+            <div id="step2Title" class="text-xs font-bold text-white mt-0.5">Đếm Nhịp AI</div>
+            <div class="text-[10px] font-mono-tech text-slate-400 mt-0.5">STATE: ACTIVE</div>
+          </div>
+          <div class="p-2.5 rounded-xl bg-slate-950/80 border border-amber-500/30 text-center">
+            <div class="text-[10px] font-mono-tech text-amber-400 font-bold">03 / EARN</div>
+            <div id="step3Title" class="text-xs font-bold text-white mt-0.5">Mở Khóa &amp; XP</div>
+            <div class="text-[10px] font-mono-tech text-slate-400 mt-0.5">STATE: REWARDED</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- TAB 1: SMART APP BLOCKER (MOD-01 & MOD-03) -->
+    <!-- ========================================== -->
+    <section id="tab-blocker" class="space-y-5">
+      <!-- Screen-Time Economy Bar -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        <div class="lg:col-span-2 rounded-2xl bg-slate-900/90 border border-slate-800 p-4 sm:p-5">
+          <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+            <div>
+              <span class="text-[10px] font-mono-tech uppercase text-teal-400 font-bold">MOD-03 // SCREEN-TIME ECONOMY</span>
+              <h2 id="econTitle" class="text-base sm:text-lg font-bold text-white">Cấu Hình Phần Thưởng Mở Khóa Mặc Định</h2>
+            </div>
+            <span class="text-xs font-mono-tech px-2.5 py-1 rounded-full bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">
+              15 – 120 MIN FLEXIBLE
+            </span>
+          </div>
+          <p id="econSubtitle" class="text-xs text-slate-400 mb-3">
+            Chọn thời lượng mở khóa nhận được sau mỗi hiệp tập và bài tập mặc định khi chạm vào ứng dụng đang khóa:
+          </p>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <!-- Unlock Duration Selector (15, 30, 60, 120 mins) -->
+            <div>
+              <label id="lblUnlockDuration" class="block text-xs font-semibold text-slate-300 mb-2">Thời gian mở khóa mỗi hiệp (Phút):</label>
+              <div class="grid grid-cols-4 gap-2" id="durationBtnGroup">
+                <button type="button" onclick="setUnlockDuration(15)" id="dur-15" class="py-2 rounded-xl font-mono-tech text-xs font-bold border transition">15p</button>
+                <button type="button" onclick="setUnlockDuration(30)" id="dur-30" class="py-2 rounded-xl font-mono-tech text-xs font-bold border transition">30p</button>
+                <button type="button" onclick="setUnlockDuration(60)" id="dur-60" class="py-2 rounded-xl font-mono-tech text-xs font-bold border transition">60p</button>
+                <button type="button" onclick="setUnlockDuration(120)" id="dur-120" class="py-2 rounded-xl font-mono-tech text-xs font-bold border transition">120p</button>
+              </div>
+            </div>
+
+            <!-- Default Exercise & Reps Selector -->
+            <div>
+              <label id="lblDefaultReps" class="block text-xs font-semibold text-slate-300 mb-2">Số nhịp yêu cầu mỗi lần mở khóa:</label>
+              <div class="grid grid-cols-4 gap-2" id="repsBtnGroup">
+                <button type="button" onclick="setDefaultReps(10)" id="rep-10" class="py-2 rounded-xl font-mono-tech text-xs font-bold border transition">10 nhịp</button>
+                <button type="button" onclick="setDefaultReps(15)" id="rep-15" class="py-2 rounded-xl font-mono-tech text-xs font-bold border transition">15 nhịp</button>
+                <button type="button" onclick="setDefaultReps(20)" id="rep-20" class="py-2 rounded-xl font-mono-tech text-xs font-bold border transition">20 nhịp</button>
+                <button type="button" onclick="setDefaultReps(30)" id="rep-30" class="py-2 rounded-xl font-mono-tech text-xs font-bold border transition">30 nhịp</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick Character & Time Bank Summary Card -->
+        <div class="rounded-2xl bg-slate-900/90 border border-slate-800 p-4 sm:p-5 flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between">
+              <span class="text-[10px] font-mono-tech uppercase text-amber-400 font-bold">CHARACTER OS // SYNCED</span>
+              <span id="miniRankBadge" class="text-[11px] font-mono-tech px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30 font-bold">LVL 3</span>
+            </div>
+            <div class="flex items-center gap-3 mt-2.5">
+              <div id="miniHeroAvatar" class="w-12 h-12 rounded-xl bg-slate-950 border border-teal-500/40 flex items-center justify-center p-1"></div>
+              <div class="flex-1 min-w-0">
+                <div id="miniHeroRankName" class="text-sm font-bold text-white truncate">Chiến Binh Kỷ Luật</div>
+                <div class="w-full h-2 rounded-full bg-slate-800 overflow-hidden mt-1">
+                  <div id="miniXpBar" class="h-full bg-gradient-to-r from-teal-400 to-emerald-400 transition-all duration-300" style="width: 45%"></div>
+                </div>
+                <div id="miniXpText" class="text-[11px] font-mono-tech text-slate-400 mt-1">240 / 500 XP</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4 pt-3 border-t border-slate-800 flex items-center justify-between gap-2">
+            <div>
+              <div class="text-[11px] text-slate-400" id="lblTimeBankCard">Quỹ Thời Gian Đã Tích Lũy:</div>
+              <div class="text-base font-mono-tech font-extrabold text-cyan-300" id="cardTimeBankVal">45 phút</div>
+            </div>
+            <button type="button" onclick="startFreeWorkout()" class="px-3 py-2 rounded-xl bg-teal-500 hover:bg-teal-400 text-slate-950 font-bold text-xs transition shadow-md shadow-teal-500/20">
+              💪 Tập Tích Giờ
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ANDROID NATIVE OS BRIDGE & APK SETUP CONTROL CENTER -->
+      <div class="rounded-2xl bg-gradient-to-r from-slate-900 via-teal-950/40 to-slate-900 border border-teal-500/40 p-4 sm:p-5 space-y-4">
+        <div class="flex flex-wrap items-center justify-between gap-2">
+          <div>
+            <div class="inline-flex items-center gap-1.5 text-[10px] font-mono-tech uppercase text-teal-300 bg-teal-500/15 px-2.5 py-0.5 rounded-full border border-teal-500/30 font-bold">
+              <span>🤖 ANDROID SYSTEM CONTROLLER // CHẠY NGẦM ỔN ĐỊNH 24/7</span>
+            </div>
+            <h2 class="text-base sm:text-lg font-bold text-white mt-1">Trạng Thái Quản Lý Ứng Dụng Hệ Thống &amp; Cấp Quyền APK</h2>
+          </div>
+          <div class="flex items-center gap-2">
+            <span id="nativeBridgeStatusBadge" class="text-xs font-mono-tech px-3 py-1 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40 font-bold">
+              🌐 Chế độ Web / Giả lập (Cài APK để khóa App thật)
+            </span>
+            <button type="button" id="btnScanRealApps" onclick="scanDeviceInstalledApps()" class="px-3 py-1.5 rounded-xl bg-teal-500 hover:bg-teal-400 text-slate-950 font-black text-xs transition shadow-md shadow-teal-500/20">
+              🔍 Quét App Trên Máy
+            </button>
+          </div>
+        </div>
+
+        <!-- 3 Core Android OS Permissions for Stable App Blocking -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+          <div class="p-3.5 rounded-xl bg-slate-950/90 border border-slate-800 flex flex-col justify-between gap-2">
+            <div>
+              <div class="flex items-center justify-between text-xs font-mono-tech">
+                <span class="text-teal-400 font-bold">1. QUYỀN TRỢ NĂNG</span>
+                <span id="permStatusAccessibility" class="text-amber-300 font-bold">⚡ Cần bật trên APK</span>
+              </div>
+              <div class="text-xs font-bold text-white mt-1">Phát hiện mở TikTok, YouTube, FB</div>
+              <p class="text-[11px] text-slate-400 mt-0.5">Giúp ActionLock nhận biết ngay lập tức khi bạn chạm vào ứng dụng bị khóa ở màn hình chính.</p>
+            </div>
+            <button type="button" id="btnPermAccessibility" onclick="triggerNativePermission('accessibility')" class="w-full py-2 px-3 rounded-lg bg-slate-800 hover:bg-slate-700 text-teal-300 border border-teal-500/30 text-xs font-bold transition">
+              ⚙️ Mở Cài Đặt Trợ Năng (Accessibility)
+            </button>
+          </div>
+
+          <div class="p-3.5 rounded-xl bg-slate-950/90 border border-slate-800 flex flex-col justify-between gap-2">
+            <div>
+              <div class="flex items-center justify-between text-xs font-mono-tech">
+                <span class="text-cyan-400 font-bold">2. HIỂN THỊ ĐÈ LÊN APP</span>
+                <span id="permStatusOverlay" class="text-amber-300 font-bold">⚡ Cần bật trên APK</span>
+              </div>
+              <div class="text-xs font-bold text-white mt-1">Bật màn hình chắn &amp; đẩy ra khi hết giờ</div>
+              <p class="text-[11px] text-slate-400 mt-0.5">Chặn đứng thao tác lướt và hiện màn hình yêu cầu Hít đất / Squat đè lên ứng dụng đang khóa.</p>
+            </div>
+            <button type="button" id="btnPermOverlay" onclick="triggerNativePermission('overlay')" class="w-full py-2 px-3 rounded-lg bg-slate-800 hover:bg-slate-700 text-cyan-300 border border-cyan-500/30 text-xs font-bold transition">
+              🪟 Mở Quyền Hiển Thị Trên App Khác
+            </button>
+          </div>
+
+          <div class="p-3.5 rounded-xl bg-slate-950/90 border border-slate-800 flex flex-col justify-between gap-2">
+            <div>
+              <div class="flex items-center justify-between text-xs font-mono-tech">
+                <span class="text-emerald-400 font-bold">3. CHẠY NGẦM BẤT TỬ</span>
+                <span id="permStatusBattery" class="text-amber-300 font-bold">⚡ Cần bật trên APK</span>
+              </div>
+              <div class="text-xs font-bold text-white mt-1">Không bị Samsung / Xiaomi / OPPO tắt ngầm</div>
+              <p class="text-[11px] text-slate-400 mt-0.5">Chạy dịch vụ Foreground Service + bỏ giới hạn pin để đếm ngược chính xác từng giây 24/7.</p>
+            </div>
+            <button type="button" id="btnPermBattery" onclick="triggerNativePermission('battery')" class="w-full py-2 px-3 rounded-lg bg-slate-800 hover:bg-slate-700 text-emerald-300 border border-emerald-500/30 text-xs font-bold transition">
+              🔋 Bỏ Tối Ưu Hóa Pin (Chạy Ngầm 24/7)
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Distracting Apps Control Header -->
+      <div class="flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <span class="text-[10px] font-mono-tech uppercase text-rose-400 font-bold">MOD-01 // SMART APP RESTRICTION</span>
+          <h2 id="appListHeading" class="text-lg font-bold text-white">Danh Sách Ứng Dụng Gây Xao Nhãng (Chạm "Thử Mở" Để Kiểm Tra Chặn)</h2>
+        </div>
+        <div class="flex items-center gap-2">
+          <button type="button" id="btnLockAll" onclick="toggleAllApps(true)" class="px-3 py-1.5 rounded-xl bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 border border-rose-500/30 text-xs font-semibold transition">
+            🔒 Khóa Tất Cả
+          </button>
+          <button type="button" id="btnAddCustomApp" onclick="openAddAppModal()" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-teal-300 border border-slate-700 text-xs font-semibold transition">
+            + Thêm Ứng Dụng
+          </button>
+        </div>
+      </div>
+
+      <!-- Apps Grid -->
+      <div id="appsGridContainer" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5"></div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- TAB 2: AI REP COUNTER & WORKOUT (MOD-02)   -->
+    <!-- ========================================== -->
+    <section id="tab-workout" class="hidden space-y-5">
+      <!-- Active Unlock Banner (if unlocking a specific app) -->
+      <div id="workoutContextBanner" class="rounded-2xl bg-gradient-to-r from-rose-950/80 via-slate-900 to-slate-900 border border-rose-500/40 p-4 flex flex-wrap items-center justify-between gap-3">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-rose-500/20 border border-rose-500/40 flex items-center justify-center text-xl" id="workoutTargetIcon">🎵</div>
+          <div>
+            <div class="text-[10px] font-mono-tech uppercase text-rose-400 font-bold" id="workoutModeLabel">INTERCEPT CHALLENGE // MỞ KHÓA ỨNG DỤNG</div>
+            <div class="text-sm sm:text-base font-bold text-white" id="workoutTargetTitle">Hoàn thành 15 nhịp Hít đất để mở khóa TikTok trong 30 phút</div>
+          </div>
+        </div>
+        <button type="button" onclick="switchToFreeWorkoutMode()" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-mono-tech border border-slate-700 transition">
+          Chuyển sang Tập Tự Do
+        </button>
+      </div>
+
+      <!-- Exercise Selection Cards (Push-ups, Squats, Sit-ups, Lunges) -->
+      <div>
+        <div class="flex items-center justify-between mb-2.5">
+          <span class="text-xs font-mono-tech uppercase text-teal-400 font-bold">LOADOUT // CHỌN BÀI TẬP VẬN ĐỘNG (4 BÀI TẬP CHUẨN ACTIONLOCK)</span>
+          <span class="text-xs text-slate-400 font-mono-tech">ON-DEVICE AI POSE &amp; MOTION</span>
+        </div>
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-3" id="exerciseSelectorGrid"></div>
+      </div>
+
+      <!-- Main AI Vision & Rep Counter Arena -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-5">
+        <!-- Left 7 Cols: Camera / AI Pose Vision Viewport -->
+        <div class="lg:col-span-7 rounded-2xl bg-slate-900 border border-slate-800 overflow-hidden flex flex-col">
+          <!-- Detection Mode Switcher -->
+          <div class="p-3 bg-slate-950/80 border-b border-slate-800 flex flex-wrap items-center justify-between gap-2">
+            <div class="flex items-center gap-1.5">
+              <button type="button" id="modeBtn-camera" onclick="setDetectionMode('camera')" class="px-3 py-1.5 rounded-lg text-xs font-bold transition">
+                📷 Camera AI Vision
+              </button>
+              <button type="button" id="modeBtn-cadence" onclick="setDetectionMode('cadence')" class="px-3 py-1.5 rounded-lg text-xs font-bold transition">
+                🤖 Nhịp Dẫn AI / Cảm Biến
+              </button>
+              <button type="button" id="modeBtn-tap" onclick="setDetectionMode('tap')" class="px-3 py-1.5 rounded-lg text-xs font-bold transition">
+                👆 Chạm Mũi / Thủ Công
+              </button>
+            </div>
+            <span class="text-[10px] font-mono-tech text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/30">
+              🔒 100% ON-DEVICE PRIVACY
+            </span>
+          </div>
+
+          <!-- Interactive Viewport Area -->
+          <div class="relative bg-slate-950 min-h-[320px] sm:min-h-[370px] flex items-center justify-center overflow-hidden">
+            <div class="scanline-bar"></div>
+
+            <!-- Live Webcam Video (Hidden behind HUD canvas when active) -->
+            <video id="webcamVideo" autoplay playsinline muted class="hidden absolute inset-0 w-full h-full object-cover opacity-55 scale-x-[-1]"></video>
+
+            <!-- AI Vision & Animated Pose Skeleton Canvas -->
+            <canvas id="visionCanvas" width="640" height="400" class="w-full h-full max-h-[380px] object-contain relative z-10"></canvas>
+
+            <!-- Nose-Tap Giant Target Overlay (Visible in Tap Mode or clickable anytime) -->
+            <div id="noseTapOverlay" class="hidden absolute inset-0 z-20 flex flex-col items-center justify-center bg-slate-950/75 backdrop-blur-sm p-4">
+              <button type="button" id="btnGiantNoseTap" onclick="triggerManualRep()" class="w-48 h-48 sm:w-56 sm:h-56 rounded-full bg-gradient-to-br from-teal-400/20 via-emerald-500/20 to-cyan-500/20 border-4 border-teal-400 flex flex-col items-center justify-center gap-2 neon-glow active:scale-95 transition cursor-pointer select-none">
+                <span class="text-4xl">👃 / 👆</span>
+                <span class="text-base font-black text-teal-300 uppercase tracking-wider">CHẠM ĐỂ ĐẾM NHỊP</span>
+                <span class="text-[11px] font-mono-tech text-slate-300 text-center px-4">Đặt điện thoại dưới ngực khi Hít đất hoặc chạm tay mỗi nhịp</span>
+              </button>
+            </div>
+
+            <!-- HUD Corner Telemetry -->
+            <div class="absolute top-3 left-3 z-20 pointer-events-none space-y-1">
+              <div class="px-2.5 py-1 rounded bg-slate-950/85 border border-slate-700/80 text-[11px] font-mono-tech text-teal-300">
+                <span id="hudDetectionStatus">VISION: STANDBY</span>
+              </div>
+              <div class="px-2.5 py-1 rounded bg-slate-950/85 border border-slate-700/80 text-[11px] font-mono-tech text-slate-300">
+                PHASE: <span id="hudPhaseText" class="text-amber-300 font-bold">UP / READY</span>
+              </div>
+            </div>
+
+            <div class="absolute top-3 right-3 z-20 pointer-events-none text-right">
+              <div class="px-2.5 py-1 rounded bg-slate-950/85 border border-slate-700/80 text-[11px] font-mono-tech text-emerald-300">
+                <span id="hudCalorieCounter">0.0 kcal</span> • <span id="hudXpEarned">+0 XP</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Camera / Sensitivity Controls Footer -->
+          <div class="p-3.5 bg-slate-900 border-t border-slate-800 flex flex-wrap items-center justify-between gap-3">
+            <div class="flex items-center gap-2">
+              <button type="button" id="btnToggleCamera" onclick="toggleWebcamStream()" class="px-3 py-1.5 rounded-xl bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-300 border border-cyan-500/40 text-xs font-bold transition">
+                📷 Bật Camera Thật (WebRTC)
+              </button>
+              <span id="cameraHintText" class="text-xs text-slate-400">Hoặc nhấn "Bắt Đầu Hiệp Tập" để AI dẫn nhịp</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <label for="motionSensitivity" class="text-xs font-mono-tech text-slate-400">Độ nhạy AI:</label>
+              <input id="motionSensitivity" type="range" min="15" max="85" value="50" onchange="updateSensitivity(this.value)" class="w-24 accent-teal-400 cursor-pointer" />
+            </div>
+          </div>
+        </div>
+
+        <!-- Right 5 Cols: Rep Counter HUD & Action Controls -->
+        <div class="lg:col-span-5 rounded-2xl bg-slate-900 border border-slate-800 p-5 flex flex-col justify-between space-y-4">
+          <div>
+            <div class="flex items-center justify-between">
+              <span class="text-[11px] font-mono-tech uppercase text-teal-400 font-bold">REP TELEMETRY // AL-SYSTEM</span>
+              <span id="workoutTimerDisplay" class="text-xs font-mono-tech text-slate-400">00:00</span>
+            </div>
+
+            <!-- Giant Rep Counter Display -->
+            <div class="my-4 p-6 rounded-2xl bg-slate-950 border border-slate-800 text-center relative overflow-hidden">
+              <div class="text-xs font-mono-tech uppercase text-slate-400 mb-1" id="currentExerciseTitle">HÍT ĐẤT (PUSH-UPS)</div>
+              <div class="flex items-baseline justify-center gap-2 my-1">
+                <span id="liveRepCount" class="text-6xl sm:text-7xl font-mono-tech font-black text-teal-400 tracking-tight">0</span>
+                <span class="text-2xl font-mono-tech text-slate-500">/</span>
+                <span id="targetRepCount" class="text-3xl font-mono-tech font-bold text-slate-300">15</span>
+              </div>
+              <div class="w-full h-3 rounded-full bg-slate-800 overflow-hidden mt-3">
+                <div id="repProgressBar" class="h-full bg-gradient-to-r from-teal-400 via-emerald-400 to-lime-400 transition-all duration-300" style="width: 0%"></div>
+              </div>
+              <div id="repMotivationalText" class="text-xs text-slate-400 mt-2.5">
+                Sẵn sàng! Hạ người xuống vùng dưới rồi đẩy lên để tính 1 nhịp.
+              </div>
+            </div>
+
+            <!-- Target Reps & Reward Adjustment inside Workout -->
+            <div class="grid grid-cols-2 gap-3">
+              <div class="p-3 rounded-xl bg-slate-950/70 border border-slate-800">
+                <label for="selectTargetReps" class="block text-[11px] font-mono-tech text-slate-400 mb-1">MỤC TIÊU NHỊP:</label>
+                <select id="selectTargetReps" onchange="changeWorkoutTargetReps(this.value)" class="w-full bg-slate-900 text-white font-mono-tech text-xs font-bold rounded-lg px-2.5 py-1.5 border border-slate-700">
+                  <option value="5">5 nhịp (Khởi động)</option>
+                  <option value="10">10 nhịp (Tiêu chuẩn)</option>
+                  <option value="15" selected>15 nhịp (Đề xuất)</option>
+                  <option value="20">20 nhịp (Nâng cao)</option>
+                  <option value="30">30 nhịp (Thử thách)</option>
+                  <option value="50">50 nhịp (Chiến thần)</option>
+                </select>
+              </div>
+              <div class="p-3 rounded-xl bg-slate-950/70 border border-slate-800">
+                <label for="selectRewardMins" class="block text-[11px] font-mono-tech text-slate-400 mb-1">THƯỞNG THỜI GIAN:</label>
+                <select id="selectRewardMins" onchange="changeWorkoutRewardMins(this.value)" class="w-full bg-slate-900 text-cyan-300 font-mono-tech text-xs font-bold rounded-lg px-2.5 py-1.5 border border-slate-700">
+                  <option value="15">+15 phút mở khóa</option>
+                  <option value="30" selected>+30 phút mở khóa</option>
+                  <option value="60">+60 phút mở khóa</option>
+                  <option value="120">+120 phút mở khóa</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- Workout Action Buttons -->
+          <div class="space-y-2.5 pt-2">
+            <div class="grid grid-cols-2 gap-2.5">
+              <button type="button" id="btnStartAutoSession" onclick="toggleWorkoutSession()" class="py-3 px-4 rounded-xl bg-gradient-to-r from-teal-400 to-emerald-400 hover:from-teal-300 hover:to-emerald-300 text-slate-950 font-black text-sm shadow-lg shadow-teal-500/20 transition flex items-center justify-center gap-1.5">
+                <span id="startSessionIcon">▶️</span>
+                <span id="startSessionText">Bắt Đầu Tập AI</span>
+              </button>
+              <button type="button" id="btnCountOneRep" onclick="triggerManualRep()" class="py-3 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 border border-teal-500/40 text-teal-300 font-bold text-sm transition flex items-center justify-center gap-1.5">
+                <span>⚡</span>
+                <span>+1 Nhịp Ngay</span>
+              </button>
+            </div>
+
+            <div class="grid grid-cols-2 gap-2.5">
+              <button type="button" id="btnCompleteSetEarly" onclick="finishWorkoutSet(true)" class="py-2.5 px-3 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/40 text-amber-300 font-bold text-xs transition">
+                ✅ Hoàn Thành Hiệp Ngay
+              </button>
+              <button type="button" id="btnResetWorkout" onclick="resetCurrentWorkout()" class="py-2.5 px-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold text-xs transition">
+                🔄 Đặt Lại Bộ Đếm
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- TAB 3: LIFE RPG & HERO SKINS (MOD-04)      -->
+    <!-- ========================================== -->
+    <section id="tab-rpg" class="hidden space-y-5">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-5">
+        <!-- Character Showcase Stage (5 cols) -->
+        <div class="lg:col-span-5 rounded-2xl bg-slate-900 border border-slate-800 p-5 flex flex-col justify-between relative overflow-hidden">
+          <div class="flex items-center justify-between">
+            <div>
+              <span class="text-[10px] font-mono-tech uppercase text-teal-400 font-bold">CHARACTER OS // PROFILE</span>
+              <h2 id="rpgHeroName" class="text-xl font-black text-white">Chiến Binh Kỷ Luật</h2>
+            </div>
+            <span id="rpgLevelBadge" class="px-3 py-1 rounded-full bg-teal-500/20 text-teal-300 border border-teal-500/40 font-mono-tech font-bold text-xs">
+              LEVEL 3
+            </span>
+          </div>
+
+          <!-- Animated SVG Hero Stage -->
+          <div class="my-6 py-6 rounded-2xl bg-slate-950/90 border border-slate-800/90 flex flex-col items-center justify-center relative">
+            <div id="heroStageSvgContainer" class="w-44 h-44 flex items-center justify-center animate-hero"></div>
+            <div id="equippedSkinBadge" class="mt-3 px-3 py-1 rounded-full bg-slate-900 border border-slate-700 text-xs font-mono-tech text-teal-300">
+              Trang phục: AL-01 Vanguard
+            </div>
+          </div>
+
+          <!-- XP Progress & Attribute Bars -->
+          <div class="space-y-3">
+            <div>
+              <div class="flex justify-between text-xs font-mono-tech mb-1">
+                <span class="text-slate-400">TIẾN ĐỘ THĂNG CẤP (XP)</span>
+                <span id="rpgXpProgressText" class="text-teal-300 font-bold">240 / 500 XP</span>
+              </div>
+              <div class="w-full h-3 rounded-full bg-slate-800 overflow-hidden">
+                <div id="rpgXpBar" class="h-full bg-gradient-to-r from-teal-400 via-emerald-400 to-cyan-400 transition-all duration-300" style="width: 48%"></div>
+              </div>
+            </div>
+
+            <!-- 4 RPG Attributes -->
+            <div class="grid grid-cols-2 gap-2.5 pt-2">
+              <div class="p-2.5 rounded-xl bg-slate-950 border border-slate-800">
+                <div class="text-[10px] font-mono-tech text-rose-400">💪 SỨC MẠNH (STR)</div>
+                <div id="statStrVal" class="text-base font-black text-white mt-0.5">28</div>
+              </div>
+              <div class="p-2.5 rounded-xl bg-slate-950 border border-slate-800">
+                <div class="text-[10px] font-mono-tech text-cyan-400">⚡ BỀN BỈ (STA)</div>
+                <div id="statStaVal" class="text-base font-black text-white mt-0.5">34</div>
+              </div>
+              <div class="p-2.5 rounded-xl bg-slate-950 border border-slate-800">
+                <div class="text-[10px] font-mono-tech text-amber-400">🛡️ KỶ LUẬT (DIS)</div>
+                <div id="statDisVal" class="text-base font-black text-white mt-0.5">42</div>
+              </div>
+              <div class="p-2.5 rounded-xl bg-slate-950 border border-slate-800">
+                <div class="text-[10px] font-mono-tech text-purple-400">🧠 TẬP TRUNG (FOC)</div>
+                <div id="statFocVal" class="text-base font-black text-white mt-0.5">39</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Hero Skins Shop & Rank Ladder (7 cols) -->
+        <div class="lg:col-span-7 space-y-5">
+          <div class="rounded-2xl bg-slate-900 border border-slate-800 p-5">
+            <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
+              <div>
+                <span class="text-[10px] font-mono-tech uppercase text-amber-400 font-bold">APPEARANCE // HERO SKINS</span>
+                <h3 class="text-lg font-bold text-white">Kho Trang Phục Anh Hùng (100% Mở Khóa Bằng Xu Tập Luyện)</h3>
+              </div>
+              <button type="button" id="btnClaimFreeCoins" onclick="claimFreeBonusCoins()" class="px-3 py-1.5 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/40 text-amber-300 text-xs font-bold transition">
+                🎁 Nhận +300 Xu Miễn Phí
+              </button>
+            </div>
+
+            <div id="skinsGridContainer" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5"></div>
+          </div>
+
+          <!-- Rank Progression Ladder -->
+          <div class="rounded-2xl bg-slate-900 border border-slate-800 p-5">
+            <span class="text-[10px] font-mono-tech uppercase text-cyan-400 font-bold">RANK SYSTEM // LỘ TRÌNH DANH HIỆU</span>
+            <h3 class="text-base font-bold text-white mb-3">Cấp Bậc Chiến Binh ActionLock</h3>
+            <div id="ranksLadderContainer" class="grid grid-cols-2 sm:grid-cols-3 gap-2.5"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- TAB 4: DAILY & WEEKLY QUESTS (MOD-05)      -->
+    <!-- ========================================== -->
+    <section id="tab-quests" class="hidden space-y-5">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+        <!-- Daily Quests -->
+        <div class="rounded-2xl bg-slate-900 border border-slate-800 p-5">
+          <div class="flex items-center justify-between mb-4">
+            <div>
+              <span class="text-[10px] font-mono-tech uppercase text-teal-400 font-bold">MOD-05 // DAILY QUESTS</span>
+              <h2 class="text-lg font-bold text-white">Nhiệm Vụ Hàng Ngày</h2>
+            </div>
+            <span class="text-xs font-mono-tech text-slate-400 bg-slate-950 px-2.5 py-1 rounded-lg border border-slate-800">
+              Làm mới: 24h
+            </span>
+          </div>
+          <div id="dailyQuestsContainer" class="space-y-3"></div>
+        </div>
+
+        <!-- Weekly Quests (v1.0.29 feature) -->
+        <div class="rounded-2xl bg-slate-900 border border-slate-800 p-5">
+          <div class="flex items-center justify-between mb-4">
+            <div>
+              <span class="text-[10px] font-mono-tech uppercase text-purple-400 font-bold">CAMPAIGN // WEEKLY QUESTS</span>
+              <h2 class="text-lg font-bold text-white">Chiến Dịch Hàng Tuần</h2>
+            </div>
+            <span class="text-xs font-mono-tech text-purple-300 bg-purple-500/10 px-2.5 py-1 rounded-lg border border-purple-500/30">
+              Thưởng X2 XP &amp; Xu
+            </span>
+          </div>
+          <div id="weeklyQuestsContainer" class="space-y-3"></div>
+        </div>
+      </div>
+
+      <!-- Achievements / Badges Showcase -->
+      <div class="rounded-2xl bg-slate-900 border border-slate-800 p-5">
+        <div class="mb-4">
+          <span class="text-[10px] font-mono-tech uppercase text-amber-400 font-bold">ACHIEVEMENTS // BADGE VAULT</span>
+          <h2 class="text-lg font-bold text-white">Bộ Sưu Tập Huy Hiệu Kỷ Luật</h2>
+        </div>
+        <div id="badgesGridContainer" class="grid grid-cols-2 sm:grid-cols-4 gap-3.5"></div>
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- TAB 5: DETAILED STATS & LOGS (MOD-06)      -->
+    <!-- ========================================== -->
+    <section id="tab-stats" class="hidden space-y-5">
+      <!-- Top KPI Metric Cards -->
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-3.5">
+        <div class="rounded-2xl bg-slate-900 border border-slate-800 p-4">
+          <div class="text-[11px] font-mono-tech text-teal-400 uppercase">TỔNG SỐ NHỊP ĐÃ TẬP</div>
+          <div id="statTotalReps" class="text-2xl sm:text-3xl font-mono-tech font-black text-white mt-1">145</div>
+          <div class="text-xs text-slate-400 mt-1">Hôm nay: <span id="statTodayReps" class="text-teal-300 font-bold">35</span> nhịp</div>
+        </div>
+        <div class="rounded-2xl bg-slate-900 border border-slate-800 p-4">
+          <div class="text-[11px] font-mono-tech text-cyan-400 uppercase">THỜI GIAN MÀN HÌNH KIẾM ĐƯỢC</div>
+          <div id="statEarnedMins" class="text-2xl sm:text-3xl font-mono-tech font-black text-white mt-1">180p</div>
+          <div class="text-xs text-slate-400 mt-1">Đã chặn cuộn vô thức: <span id="statIntercepts" class="text-cyan-300 font-bold">12</span> lần</div>
+        </div>
+        <div class="rounded-2xl bg-slate-900 border border-slate-800 p-4">
+          <div class="text-[11px] font-mono-tech text-amber-400 uppercase">NĂNG LƯỢNG ĐỐT CHÁY</div>
+          <div id="statTotalCalories" class="text-2xl sm:text-3xl font-mono-tech font-black text-white mt-1">68.5 kcal</div>
+          <div class="text-xs text-slate-400 mt-1">Số hiệp hoàn thành: <span id="statSetsCompleted" class="text-amber-300 font-bold">9</span> hiệp</div>
+        </div>
+        <div class="rounded-2xl bg-slate-900 border border-slate-800 p-4">
+          <div class="text-[11px] font-mono-tech text-rose-400 uppercase">CHUỖI NGÀY LIÊN TIẾP</div>
+          <div id="statStreakDays" class="text-2xl sm:text-3xl font-mono-tech font-black text-white mt-1">5 Ngày</div>
+          <div class="text-xs text-emerald-400 mt-1">100% On-Device Privacy</div>
+        </div>
+      </div>
+
+      <!-- Charts & Exercise Breakdown -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-5">
+        <div class="lg:col-span-7 rounded-2xl bg-slate-900 border border-slate-800 p-5">
+          <div class="flex items-center justify-between mb-3">
+            <div>
+              <span class="text-[10px] font-mono-tech uppercase text-teal-400 font-bold">ANALYTICS // 7-DAY PROGRESS</span>
+              <h3 class="text-base font-bold text-white">Biểu Đồ Nhịp Tập &amp; Thời Gian Mở Khóa (7 Ngày Qua)</h3>
+            </div>
+          </div>
+          <div class="relative h-64 w-full">
+            <canvas id="weeklyStatsChart"></canvas>
+          </div>
+        </div>
+
+        <div class="lg:col-span-5 rounded-2xl bg-slate-900 border border-slate-800 p-5 flex flex-col justify-between">
+          <div>
+            <span class="text-[10px] font-mono-tech uppercase text-cyan-400 font-bold">BREAKDOWN // PHÂN BỔ BÀI TẬP</span>
+            <h3 class="text-base font-bold text-white mb-4">Thống Kê Theo Từng Động Tác</h3>
+            <div id="exerciseBreakdownList" class="space-y-3.5"></div>
+          </div>
+
+          <div class="pt-4 border-t border-slate-800 flex flex-wrap items-center justify-between gap-2 mt-4">
+            <button type="button" onclick="exportUserData()" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-teal-300 text-xs font-semibold border border-slate-700 transition">
+              📋 Sao chép Báo cáo
+            </button>
+            <button type="button" onclick="resetAllUserData()" class="px-3 py-1.5 rounded-xl bg-rose-500/15 hover:bg-rose-500/25 text-rose-300 text-xs font-semibold border border-rose-500/30 transition">
+              🗑️ Đặt lại dữ liệu gốc
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent Activity Log -->
+      <div class="rounded-2xl bg-slate-900 border border-slate-800 p-5">
+        <span class="text-[10px] font-mono-tech uppercase text-slate-400 font-bold">SYSTEM TELEMETRY // ACTIVITY LOG</span>
+        <h3 class="text-base font-bold text-white mb-3">Nhật Ký Tập Luyện &amp; Mở Khóa Gần Đây</h3>
+        <div id="activityLogContainer" class="space-y-2 max-h-64 overflow-y-auto pr-1"></div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- BOTTOM NAVIGATION BAR -->
+  <nav class="fixed bottom-0 left-0 right-0 z-30 backdrop-blur-xl bg-slate-950/95 border-t border-slate-800 px-2 py-1.5">
+    <div class="max-w-xl mx-auto grid grid-cols-5 gap-1">
+      <button type="button" id="navBtn-blocker" onclick="switchTab('blocker')" class="flex flex-col items-center justify-center py-1.5 rounded-xl transition">
+        <span class="text-lg">🛡️</span>
+        <span id="navLbl-blocker" class="text-[11px] font-bold mt-0.5">Khóa App</span>
+      </button>
+      <button type="button" id="navBtn-workout" onclick="switchTab('workout')" class="flex flex-col items-center justify-center py-1.5 rounded-xl transition">
+        <span class="text-lg">📷</span>
+        <span id="navLbl-workout" class="text-[11px] font-bold mt-0.5">Tập AI</span>
+      </button>
+      <button type="button" id="navBtn-rpg" onclick="switchTab('rpg')" class="flex flex-col items-center justify-center py-1.5 rounded-xl transition">
+        <span class="text-lg">🎮</span>
+        <span id="navLbl-rpg" class="text-[11px] font-bold mt-0.5">Nhân Vật</span>
+      </button>
+      <button type="button" id="navBtn-quests" onclick="switchTab('quests')" class="flex flex-col items-center justify-center py-1.5 rounded-xl transition">
+        <span class="text-lg">🏆</span>
+        <span id="navLbl-quests" class="text-[11px] font-bold mt-0.5">Nhiệm Vụ</span>
+      </button>
+      <button type="button" id="navBtn-stats" onclick="switchTab('stats')" class="flex flex-col items-center justify-center py-1.5 rounded-xl transition">
+        <span class="text-lg">📊</span>
+        <span id="navLbl-stats" class="text-[11px] font-bold mt-0.5">Thống Kê</span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- ======================================================== -->
+  <!-- MODAL 1: APP INTERCEPTOR OVERLAY (STATE: CONTROLLED)     -->
+  <!-- ======================================================== -->
+  <div id="interceptModal" class="hidden fixed inset-0 z-50 bg-slate-950/90 backdrop-blur-md flex items-center justify-center p-4">
+    <div class="max-w-md w-full rounded-3xl bg-slate-900 border-2 border-rose-500/70 p-6 crimson-glow space-y-4 text-center relative">
+      <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-rose-500/20 border border-rose-500/40 text-rose-300 font-mono-tech text-xs font-bold">
+        <span>🚨 STATE: CONTROLLED // AL-01 INTERCEPT</span>
+      </div>
+
+      <div id="interceptAppIcon" class="w-16 h-16 mx-auto rounded-2xl bg-slate-950 border border-rose-500/40 flex items-center justify-center text-3xl shadow-lg">
+        🎵
+      </div>
+
+      <div>
+        <h3 id="interceptTitle" class="text-xl font-black text-white">TikTok Đang Bị Khóa!</h3>
+        <p id="interceptDesc" class="text-xs sm:text-sm text-slate-300 mt-1.5 leading-relaxed">
+          ActionLock đã chặn thao tác mở theo quán tính. Hoàn thành thử thách vận động ngắn bên dưới để mở khóa có chủ đích:
+        </p>
+      </div>
+
+      <!-- Challenge Box -->
+      <div class="p-4 rounded-2xl bg-slate-950 border border-slate-800 text-left space-y-2">
+        <div class="flex items-center justify-between text-xs">
+          <span class="text-slate-400 font-mono-tech">THỬ THÁCH VẬN ĐỘNG:</span>
+          <span id="interceptExerciseBadge" class="font-bold text-teal-300 font-mono-tech">15 nhịp Hít đất</span>
+        </div>
+        <div class="flex items-center justify-between text-xs">
+          <span class="text-slate-400 font-mono-tech">PHẦN THƯỞNG MỞ KHÓA:</span>
+          <span id="interceptRewardBadge" class="font-bold text-cyan-300 font-mono-tech">+30 phút &amp; +225 XP</span>
+        </div>
+      </div>
+
+      <div class="space-y-2.5 pt-1">
+        <button type="button" id="btnAcceptInterceptWorkout" onclick="acceptInterceptChallenge()" class="w-full py-3.5 px-4 rounded-2xl bg-gradient-to-r from-teal-400 to-emerald-400 hover:from-teal-300 hover:to-emerald-300 text-slate-950 font-black text-sm shadow-lg shadow-teal-500/25 transition">
+          💪 Tập Ngay Để Mở Khóa
+        </button>
+
+        <button type="button" id="btnSpendTimeBankIntercept" onclick="spendTimeBankForIntercept()" class="w-full py-2.5 px-4 rounded-2xl bg-cyan-500/15 hover:bg-cyan-500/25 border border-cyan-500/40 text-cyan-300 font-bold text-xs transition">
+          ⏱️ Dùng 15 phút từ Quỹ Thời Gian (Hiện có: <span id="interceptTimeBankAvail">45</span>p)
+        </button>
+
+        <button type="button" id="btnResistUrge" onclick="resistScrollUrge()" class="w-full py-2.5 px-4 rounded-2xl bg-slate-800 hover:bg-slate-700 text-emerald-300 font-bold text-xs transition">
+          🧘 Đóng App &amp; Từ Bỏ Cơn Nghiện Cuộn (+25 XP &amp; +15 Xu)
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================== -->
+  <!-- MODAL 2: WORKOUT REWARD CELEBRATION (STATE: REWARDED)    -->
+  <!-- ======================================================== -->
+  <div id="rewardModal" class="hidden fixed inset-0 z-50 bg-slate-950/90 backdrop-blur-md flex items-center justify-center p-4">
+    <div class="max-w-md w-full rounded-3xl bg-slate-900 border-2 border-teal-400/80 p-6 neon-glow space-y-4 text-center">
+      <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-teal-500/20 border border-teal-500/40 text-teal-300 font-mono-tech text-xs font-bold">
+        <span>✨ STATE: REWARDED // CHIẾN THẮNG KỶ LUẬT</span>
+      </div>
+      <div class="text-5xl">🏆</div>
+      <h3 id="rewardModalTitle" class="text-xl font-black text-white">Hoàn Thành Hiệp Tập Xuất Sắc!</h3>
+      <p id="rewardModalSubtitle" class="text-xs sm:text-sm text-slate-300">
+        Bạn đã chuyển hóa cơn thèm lướt mạng thành sức mạnh thể chất thực sự.
+      </p>
+
+      <div class="grid grid-cols-3 gap-2.5">
+        <div class="p-3 rounded-2xl bg-slate-950 border border-slate-800">
+          <div class="text-[10px] font-mono-tech text-cyan-400">MỞ KHÓA</div>
+          <div id="rewardMinsVal" class="text-lg font-mono-tech font-black text-white mt-0.5">+30p</div>
+        </div>
+        <div class="p-3 rounded-2xl bg-slate-950 border border-slate-800">
+          <div class="text-[10px] font-mono-tech text-teal-400">KINH NGHIỆM</div>
+          <div id="rewardXpVal" class="text-lg font-mono-tech font-black text-white mt-0.5">+225 XP</div>
+        </div>
+        <div class="p-3 rounded-2xl bg-slate-950 border border-slate-800">
+          <div class="text-[10px] font-mono-tech text-amber-400">XU THƯỞNG</div>
+          <div id="rewardCoinsVal" class="text-lg font-mono-tech font-black text-white mt-0.5">+75 Xu</div>
+        </div>
+      </div>
+
+      <button type="button" onclick="closeRewardModal()" class="w-full py-3 rounded-2xl bg-gradient-to-r from-teal-400 to-emerald-400 text-slate-950 font-black text-sm transition">
+        Tiếp Tục Hành Trình
+      </button>
+    </div>
+  </div>
+
+  <!-- ======================================================== -->
+  <!-- MODAL 3: ADD CUSTOM APP MODAL                            -->
+  <!-- ======================================================== -->
+  <div id="addAppModal" class="hidden fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="max-w-md w-full rounded-2xl bg-slate-900 border border-slate-700 p-5 space-y-4">
+      <div class="flex items-center justify-between">
+        <h3 class="text-base font-bold text-white">➕ Thêm Ứng Dụng Cần Khóa</h3>
+        <button type="button" onclick="closeAddAppModal()" class="text-slate-400 hover:text-white text-sm">✕</button>
+      </div>
+      <div class="space-y-3">
+        <div>
+          <label for="inputCustomAppName" class="block text-xs text-slate-300 mb-1">Tên ứng dụng (VD: Zalo, Discord, CapCut):</label>
+          <input id="inputCustomAppName" type="text" placeholder="Nhập tên ứng dụng" class="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-700 text-sm text-white focus:outline-none focus:border-teal-400" />
+        </div>
+        <div>
+          <label for="inputCustomAppCategory" class="block text-xs text-slate-300 mb-1">Danh mục:</label>
+          <select id="inputCustomAppCategory" class="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-700 text-sm text-white">
+            <option value="Mạng xã hội">Mạng xã hội</option>
+            <option value="Video & Giải trí">Video &amp; Giải trí</option>
+            <option value="Trò chơi (Games)">Trò chơi (Games)</option>
+            <option value="Mua sắm">Mua sắm</option>
+            <option value="Nhắn tin">Nhắn tin</option>
+          </select>
+        </div>
+        <div>
+          <label for="inputCustomAppIcon" class="block text-xs text-slate-300 mb-1">Biểu tượng:</label>
+          <select id="inputCustomAppIcon" class="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-700 text-sm text-white">
+            <option value="📱">📱 Điện thoại / App</option>
+            <option value="🎮">🎮 Trò chơi</option>
+            <option value="💬">💬 Trò chuyện</option>
+            <option value="🎬">🎬 Phim &amp; Video</option>
+            <option value="🛒">🛒 Mua sắm</option>
+            <option value="🔥">🔥 Xu hướng</option>
+          </select>
+        </div>
+      </div>
+      <div class="flex justify-end gap-2 pt-2">
+        <button type="button" onclick="closeAddAppModal()" class="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 text-xs font-semibold">Hủy</button>
+        <button type="button" onclick="saveCustomApp()" class="px-4 py-2 rounded-xl bg-teal-400 text-slate-950 text-xs font-black">Thêm &amp; Khóa Ngay</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================== -->
+  <!-- MODAL 4: TIME BANK MODAL                                 -->
+  <!-- ======================================================== -->
+  <div id="timeBankModal" class="hidden fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="max-w-md w-full rounded-2xl bg-slate-900 border border-slate-700 p-5 space-y-4">
+      <div class="flex items-center justify-between">
+        <h3 class="text-base font-bold text-white">⏱️ Quỹ Thời Gian Màn Hình (Time Bank)</h3>
+        <button type="button" onclick="closeTimeBankModal()" class="text-slate-400 hover:text-white text-sm">✕</button>
+      </div>
+      <p class="text-xs text-slate-300 leading-relaxed">
+        Mỗi khi bạn tập luyện tự do, số phút kiếm được sẽ cộng vào Quỹ Thời Gian. Bạn có thể dùng quỹ này để mở khóa nhanh bất kỳ ứng dụng nào!
+      </p>
+      <div class="p-4 rounded-xl bg-slate-950 border border-slate-800 flex items-center justify-between">
+        <span class="text-xs font-mono-tech text-slate-400">SỐ DƯ HIỆN TẠI:</span>
+        <span id="modalTimeBankBalance" class="text-2xl font-mono-tech font-black text-cyan-300">45 phút</span>
+      </div>
+      <div class="flex justify-end gap-2">
+        <button type="button" onclick="closeTimeBankModal()" class="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 text-xs font-semibold">Đóng</button>
+        <button type="button" onclick="closeTimeBankModal(); startFreeWorkout();" class="px-4 py-2 rounded-xl bg-teal-400 text-slate-950 text-xs font-black">💪 Tập Thêm Tích Giờ</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================== -->
+  <!-- MODAL 5: APK & PWA INSTALLATION GUIDE                    -->
+  <!-- ======================================================== -->
+  <div id="apkModal" class="hidden fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="max-w-lg w-full rounded-2xl bg-slate-900 border border-teal-500/50 p-5 space-y-4 max-h-[90vh] overflow-y-auto">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <span class="text-xl">📲</span>
+          <h3 class="text-base font-bold text-white">Hướng Dẫn Cài Đặt ActionLock Free (APK &amp; PWA)</h3>
+        </div>
+        <button type="button" onclick="closeApkModal()" class="text-slate-400 hover:text-white text-sm">✕</button>
+      </div>
+
+      <div class="space-y-3 text-xs text-slate-300 leading-relaxed">
+        <div class="p-3.5 rounded-xl bg-slate-950 border border-teal-500/30 space-y-1.5">
+          <div class="font-bold text-teal-300">Cách 1: Cài đặt trực tiếp làm App trên Điện thoại (10 giây — Không cần máy tính)</div>
+          <p>• <strong>Trên Android (Chrome):</strong> Mở file ứng dụng này trên Chrome ➔ Nhấn biểu tượng <strong>⋮ (3 chấm)</strong> ở góc phải ➔ Chọn <strong>"Thêm vào màn hình chính" (Add to Home screen / Install App)</strong> để chạy toàn màn hình với Camera AI đếm nhịp thật.</p>
+          <p>• <strong>Trên iPhone/iPad (Safari):</strong> Nhấn nút <strong>Chia sẻ (Share)</strong> ➔ Chọn <strong>"Thêm vào Màn hình chính" (Add to Home Screen)</strong>.</p>
+        </div>
+
+        <div class="p-3.5 rounded-xl bg-slate-950 border border-cyan-500/40 space-y-2">
+          <div class="font-bold text-cyan-300 text-sm">Làm sao để biến gói mã nguồn thành 1 file .APK tải về điện thoại? (Không cần biết lập trình)</div>
+          <p class="text-slate-300">Vì lý do bảo mật, trình duyệt không tự sinh file nhị phân <code>.apk</code> trực tiếp, nhưng tôi đã đóng gói sẵn <strong>cỗ máy tự động đóng gói APK miễn phí trên GitHub</strong> trong file <code>actionlock_android_source.zip</code>. Bạn chỉ cần làm đúng 4 thao tác sau (mất 2 phút):</p>
+          <ol class="list-decimal pl-4 space-y-1.5 text-slate-200">
+            <li><strong>Bước 1:</strong> Tải file <code>actionlock_android_source.zip</code> ở khung chat về máy và <strong>Giải nén (Unzip)</strong> ra 1 thư mục.</li>
+            <li><strong>Bước 2:</strong> Vào trang <a href="https://github.com/new" target="_blank" rel="noopener noreferrer" class="text-teal-300 underline font-bold">github.com/new</a> (đăng nhập tài khoản GitHub miễn phí), đặt tên bất kỳ (ví dụ: <code>actionlock-apk</code>) rồi bấm <strong>Create repository</strong>.</li>
+            <li><strong>Bước 3:</strong> Nhấn dòng chữ <strong>"uploading an existing file"</strong>, kéo toàn bộ các file/thư mục vừa giải nén thả vào đó rồi bấm nút xanh <strong>Commit changes</strong>.</li>
+            <li><strong>Bước 4:</strong> Nhấn vào tab <strong>Actions</strong> ở thanh menu trên cùng của GitHub ➔ Đợi khoảng 90 giây cho tích xanh hiện lên ➔ Bấm vào dòng kết quả và tải file <strong><code>ActionLock-Free-v1.0-debug.apk</code></strong> về điện thoại cài đặt!</li>
+          </ol>
+        </div>
+
+        <div class="p-3.5 rounded-xl bg-slate-950 border border-emerald-500/30 space-y-1.5">
+          <div class="font-bold text-emerald-300">Sau khi cài file .APK vào điện thoại, làm sao để nó khóa các App khác ổn định?</div>
+          <p>Ngay khi mở app <strong>ActionLock Free</strong> vừa cài từ file APK:</p>
+          <ul class="list-disc pl-4 space-y-1 text-slate-300">
+            <li>Bấm nút <strong>"1. Mở Cài Đặt Trợ Năng"</strong> ➔ Bật công tắc cho <strong>ActionLock Free Blocker</strong>.</li>
+            <li>Bấm nút <strong>"2. Mở Quyền Hiển Thị Trên App Khác"</strong> và <strong>"3. Bỏ Tối Ưu Hóa Pin"</strong>.</li>
+            <li>Từ lúc đó, dịch vụ ngầm <code>KeepAliveForegroundService</code> và <code>AppBlockerAccessibilityService</code> sẽ canh gác 24/7: hễ bạn bấm mở TikTok, Instagram, YouTube, Facebook hay Game khi chưa tập hoặc khi hết giờ đếm ngược, hệ thống lập tức chặn màn hình đó lại và bắt bạn hoàn thành đủ nhịp Hít đất / Squat mới cho vào!</li>
+          </ul>
+        </div>
+
+        <div class="p-3.5 rounded-xl bg-slate-950 border border-cyan-500/30 space-y-1.5">
+          <div class="font-bold text-cyan-300">Chi tiết kỹ thuật trong gói mã nguồn (Dành cho máy tính có Android Studio)</div>
+          <p>Gói dự án Android Studio hoàn chỉnh (<code>actionlock_android_source.zip</code>) đã được tạo kèm theo với đầy đủ:</p>
+          <ul class="list-disc pl-4 space-y-1 text-slate-300">
+            <li><code>AppBlockerService.kt</code>: Dịch vụ <code>AccessibilityService</code> chặn trực tiếp TikTok, Instagram, YouTube, Facebook ở cấp hệ điều hành Android.</li>
+            <li><code>PoseRepDetector.kt</code>: Nhận diện khớp xương bằng Google ML Kit Pose Detection trên thiết bị.</li>
+            <li><code>.github/workflows/build-apk.yml</code>: Tải lên GitHub để tự động xuất file <code>ActionLock-Free-debug.apk</code> miễn phí trên đám mây hoặc chạy lệnh <code>./gradlew assembleDebug</code> trong Android Studio.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="flex justify-end">
+        <button type="button" onclick="closeApkModal()" class="px-5 py-2 rounded-xl bg-teal-400 text-slate-950 font-black text-xs">Đã Hiểu</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST NOTIFICATION -->
+  <div id="toastBox" class="hidden fixed bottom-20 right-4 z-50 max-w-sm px-4 py-3 rounded-2xl bg-slate-900 border border-teal-400/60 text-white text-xs font-semibold shadow-2xl flex items-center gap-2.5">
+    <span id="toastIcon">✅</span>
+    <span id="toastMessage">Đã cập nhật!</span>
+  </div>
+
+  <!-- APPLICATION LOGIC -->
+  <script>
+    // =========================================================================
+    // STATE MANAGEMENT & DEFAULT ACTIONLOCK DATA
+    // =========================================================================
+    const STORAGE_KEY = 'actionlock_free_state_v1';
+
+    const EXERCISES = [
+      {
+        id: 'pushups',
+        nameVi: 'Hít Đất (Push-ups)',
+        nameEn: 'Push-ups',
+        icon: '💪',
+        xpPerRep: 15,
+        coinsPerRep: 5,
+        kcalPerRep: 0.45,
+        muscleVi: 'Ngực • Vai • Tay sau',
+        muscleEn: 'Chest • Shoulders • Triceps',
+        cueDownVi: 'Hạ thấp ngực xuống sàn (Gập khuỷu tay < 90°)',
+        cueUpVi: 'Đẩy thẳng tay nâng thân người lên!'
+      },
+      {
+        id: 'squats',
+        nameVi: 'Gánh Đùi (Squats)',
+        nameEn: 'Squats',
+        icon: '🦵',
+        xpPerRep: 12,
+        coinsPerRep: 4,
+        kcalPerRep: 0.52,
+        muscleVi: 'Đùi trước • Cơ mông • Core',
+        muscleEn: 'Quads • Glutes • Core',
+        cueDownVi: 'Hạ hông xuống song song mặt đất',
+        cueUpVi: 'Đạp gót chân đứng thẳng dậy!'
+      },
+      {
+        id: 'situps',
+        nameVi: 'Gập Bụng (Sit-ups)',
+        nameEn: 'Sit-ups',
+        icon: '🔥',
+        xpPerRep: 12,
+        coinsPerRep: 4,
+        kcalPerRep: 0.40,
+        muscleVi: 'Cơ bụng trên • Cơ bụng dưới',
+        muscleEn: 'Upper & Lower Abs',
+        cueDownVi: 'Hạ lưng xuống mặt thảm chuẩn bị',
+        cueUpVi: 'Siết cơ bụng nâng thân trên lên!'
+      },
+      {
+        id: 'lunges',
+        nameVi: 'Chùng Chân (Lunges)',
+        nameEn: 'Lunges',
+        icon: '🏃',
+        xpPerRep: 14,
+        coinsPerRep: 5,
+        kcalPerRep: 0.55,
+        muscleVi: 'Đùi • Khớp hông • Thăng bằng',
+        muscleEn: 'Legs • Hips • Balance',
+        cueDownVi: 'Bước chân xuống tạo góc vuông 90° ở gối',
+        cueUpVi: 'Đẩy mạnh chân trước trở về tư thế đứng!'
+      }
+    ];
+
+    const HERO_SKINS = [
+      {
+        id: 'vanguard',
+        name: 'AL-01 Vanguard',
+        descVi: 'Giáp chiến thuật Cyber tiêu chuẩn của hệ thống AL-01.',
+        descEn: 'Standard AL-01 Cyber Tactical Exo-Armor.',
+        price: 0,
+        primary: '#00f5d4',
+        secondary: '#0ea5e9',
+        aura: 'rgba(0, 245, 212, 0.25)',
+        weapon: 'shield'
+      },
+      {
+        id: 'ronin',
+        name: 'Neon Ronin',
+        descVi: 'Kiếm khách đường phố với thanh Katana năng lượng Plasma.',
+        descEn: 'Street Samurai wielding a high-frequency Plasma Katana.',
+        price: 150,
+        primary: '#f43f5e',
+        secondary: '#f59e0b',
+        aura: 'rgba(244, 63, 94, 0.28)',
+        weapon: 'katana'
+      },
+      {
+        id: 'titan',
+        name: 'Crimson Titan',
+        descVi: 'Giáp cơ khí hạng nặng tăng cường sức mạnh cơ bắp tối đa.',
+        descEn: 'Heavy Mecha Exo-Suit engineered for brute strength.',
+        price: 300,
+        primary: '#f97316',
+        secondary: '#eab308',
+        aura: 'rgba(249, 115, 22, 0.28)',
+        weapon: 'hammer'
+      },
+      {
+        id: 'viper',
+        name: 'Emerald Viper',
+        descVi: 'Sát thủ tốc độ cao chuyên trị mọi cám dỗ gây xao nhãng.',
+        descEn: 'Stealth Bio-Ninja built for zero-distraction agility.',
+        price: 450,
+        primary: '#22c55e',
+        secondary: '#a3e635',
+        aura: 'rgba(34, 197, 94, 0.28)',
+        weapon: 'daggers'
+      },
+      {
+        id: 'paladin',
+        name: 'Solar Paladin',
+        descVi: 'Hiệp sĩ quang năng tỏa sáng ý chí kỷ luật thép.',
+        descEn: 'Radiant Solar Knight powered by unwavering willpower.',
+        price: 650,
+        primary: '#eab308',
+        secondary: '#fde047',
+        aura: 'rgba(234, 179, 8, 0.30)',
+        weapon: 'spear'
+      },
+      {
+        id: 'sovereign',
+        name: 'Void Sovereign',
+        descVi: 'Chúa tể không gian làm chủ hoàn toàn thời gian màn hình.',
+        descEn: 'Cosmic Overlord with total mastery over digital time.',
+        price: 900,
+        primary: '#a855f7',
+        secondary: '#ec4899',
+        aura: 'rgba(168, 85, 247, 0.32)',
+        weapon: 'halberd'
+      }
+    ];
+
+    const RANKS = [
+      { minLvl: 1, titleVi: 'Tân Binh AL-01', titleEn: 'AL-01 Recruit', badge: '🥉' },
+      { minLvl: 3, titleVi: 'Chiến Binh Kỷ Luật', titleEn: 'Discipline Striker', badge: '⚔️' },
+      { minLvl: 5, titleVi: 'Hộ Vệ Cyber', titleEn: 'Cyber Vanguard', badge: '🛡️' },
+      { minLvl: 8, titleVi: 'Kiếm Khách Tỉnh Thức', titleEn: 'Mindful Ronin', badge: '⚡' },
+      { minLvl: 12, titleVi: 'Thống Lĩnh Tập Trung', titleEn: 'Focus Commander', badge: '💎' },
+      { minLvl: 20, titleVi: 'Huyền Thoại Tối Thượng', titleEn: 'Apex Sovereign', badge: '👑' }
+    ];
+
+    function getDefaultState() {
+      return {
+        lang: 'vi',
+        theme: 'dark',
+        soundEnabled: true,
+        activeTab: 'blocker',
+        defaultUnlockMins: 30,
+        defaultTargetReps: 15,
+        selectedExercise: 'pushups',
+        detectionMode: 'camera',
+        sensitivity: 50,
+        timeBankMins: 45,
+        xp: 1240,
+        coins: 320,
+        streakDays: 5,
+        totalReps: 145,
+        todayReps: 35,
+        totalEarnedMins: 180,
+        totalIntercepts: 12,
+        totalCalories: 68.5,
+        setsCompleted: 9,
+        exerciseCounts: { pushups: 65, squats: 40, situps: 20, lunges: 20 },
+        weeklyHistory: [18, 25, 20, 30, 15, 22, 35],
+        ownedSkins: ['vanguard'],
+        equippedSkin: 'vanguard',
+        apps: [
+          { id: 'tiktok', name: 'TikTok', category: 'Video ngắn', icon: '🎵', locked: true, unlockRemainingSec: 0, blocksToday: 5 },
+          { id: 'instagram', name: 'Instagram', category: 'Reels & Ảnh', icon: '📸', locked: true, unlockRemainingSec: 0, blocksToday: 3 },
+          { id: 'youtube', name: 'YouTube', category: 'Shorts & Video', icon: '▶️', locked: true, unlockRemainingSec: 0, blocksToday: 2 },
+          { id: 'facebook', name: 'Facebook', category: 'Mạng xã hội', icon: '📘', locked: true, unlockRemainingSec: 0, blocksToday: 2 },
+          { id: 'twitter', name: 'X (Twitter)', category: 'Tin tức', icon: '✖️', locked: true, unlockRemainingSec: 0, blocksToday: 0 },
+          { id: 'threads', name: 'Threads', category: 'Mạng xã hội', icon: '🌀', locked: true, unlockRemainingSec: 0, blocksToday: 0 },
+          { id: 'games', name: 'Liên Quân / Mobile Games', category: 'Trò chơi', icon: '🎮', locked: true, unlockRemainingSec: 0, blocksToday: 0 },
+          { id: 'reddit', name: 'Reddit', category: 'Diễn đàn', icon: '👽', locked: false, unlockRemainingSec: 0, blocksToday: 0 },
+          { id: 'shopee', name: 'Shopee', category: 'Mua sắm', icon: '🛒', locked: false, unlockRemainingSec: 0, blocksToday: 0 }
+        ],
+        dailyQuests: [
+          { id: 'dq1', titleVi: 'Khởi động kỷ luật: Tập 15 nhịp Hít đất', titleEn: 'Discipline Warmup: Complete 15 Push-ups', current: 15, target: 15, xp: 120, coins: 60, claimed: false, type: 'pushups' },
+          { id: 'dq2', titleVi: 'Đôi chân thép: Tập 20 nhịp Squat hoặc Lunges', titleEn: 'Steel Legs: Complete 20 Squats or Lunges', current: 12, target: 20, xp: 150, coins: 75, claimed: false, type: 'legs' },
+          { id: 'dq3', titleVi: 'Bậc thầy tự chủ: Mở khóa có chủ đích hoặc từ chối mở App 2 lần', titleEn: 'Self-Control: Unlock with intent or resist opening an app twice', current: 1, target: 2, xp: 180, coins: 90, claimed: false, type: 'intercept' },
+          { id: 'dq4', titleVi: 'Trọng tâm vững vàng: Tập 15 nhịp Gập bụng (Sit-ups)', titleEn: 'Core Strength: Complete 15 Sit-ups', current: 5, target: 15, xp: 120, coins: 60, claimed: false, type: 'situps' }
+        ],
+        weeklyQuests: [
+          { id: 'wq1', titleVi: 'Chiến dịch 150 Nhịp: Đạt tổng 150 nhịp tập trong tuần', titleEn: '150 Rep Campaign: Reach 150 total reps this week', current: 145, target: 150, xp: 450, coins: 220, claimed: false, type: 'totalReps' },
+          { id: 'wq2', titleVi: 'Đốt năng lượng: Tiêu hao 80 kcal qua vận động', titleEn: 'Calorie Burner: Burn 80 kcal through workouts', current: 68, target: 80, xp: 400, coins: 200, claimed: false, type: 'calories' },
+          { id: 'wq3', titleVi: 'Kiểm soát số: Kiếm 200 phút màn hình bằng mồ hôi', titleEn: 'Screen Economy: Earn 200 mins of screen time', current: 180, target: 200, xp: 500, coins: 250, claimed: false, type: 'earnedMins' }
+        ],
+        logs: [
+          { time: 'Hôm nay, 08:30', text: 'Hoàn thành 20 nhịp Hít đất ➔ Mở khóa TikTok 30 phút (+300 XP)' },
+          { time: 'Hôm nay, 10:15', text: 'Từ chối mở Instagram khi bị chặn ➔ Nhận thưởng Tỉnh Táo (+25 XP)' },
+          { time: 'Hôm qua, 19:40', text: 'Hoàn thành 25 nhịp Squat ➔ Cộng +30 phút vào Quỹ Thời Gian' }
+        ]
+      };
+    }
+
+    let state = getDefaultState();
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        state = Object.assign(getDefaultState(), parsed);
+      }
+    } catch (e) {
+      state = getDefaultState();
+    }
+
+    const ANDROID_PACKAGE_MAP = {
+      tiktok: ['com.ss.android.ugc.trill', 'com.zhiliaoapp.musically'],
+      instagram: ['com.instagram.android'],
+      youtube: ['com.google.android.youtube'],
+      facebook: ['com.facebook.katana', 'com.facebook.lite'],
+      twitter: ['com.twitter.android'],
+      threads: ['com.instagram.barcelona'],
+      games: ['com.garena.game.kgvn', 'com.tencent.ig', 'com.dts.freefireth'],
+      reddit: ['com.reddit.frontpage'],
+      shopee: ['com.shopee.vn']
+    };
+
+    function syncWithAndroidNative() {
+      try {
+        if (window.AndroidNative && typeof window.AndroidNative.syncLockedApps === 'function') {
+          const nowMs = Date.now();
+          const payload = [];
+          state.apps.forEach(app => {
+            const pkgs = app.packageName ? [app.packageName] : (ANDROID_PACKAGE_MAP[app.id] || []);
+            const unlockExpiryMs = app.unlockRemainingSec > 0 ? (nowMs + app.unlockRemainingSec * 1000) : 0;
+            pkgs.forEach(pkg => {
+              payload.push({
+                packageName: pkg,
+                appName: app.name,
+                appId: app.id,
+                locked: Boolean(app.locked),
+                unlockExpiryMs: unlockExpiryMs
+              });
+            });
+          });
+          window.AndroidNative.syncLockedApps(JSON.stringify(payload));
+        }
+      } catch (e) {
+        // Safe fallback in browser preview
+      }
+    }
+
+    function refreshAndroidNativeStatus() {
+      const badge = document.getElementById('nativeBridgeStatusBadge');
+      const accEl = document.getElementById('permStatusAccessibility');
+      const ovlEl = document.getElementById('permStatusOverlay');
+      const batEl = document.getElementById('permStatusBattery');
+      try {
+        if (window.AndroidNative && typeof window.AndroidNative.getSystemStatusJson === 'function') {
+          const st = JSON.parse(window.AndroidNative.getSystemStatusJson());
+          if (badge) {
+            badge.textContent = '✅ Đang chạy bản APK Native Android';
+            badge.className = 'text-xs font-mono-tech px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 font-bold';
+          }
+          if (accEl) {
+            accEl.textContent = st.accessibilityEnabled ? '✅ ĐÃ BẬT' : '⚠️ CHƯA BẬT';
+            accEl.className = st.accessibilityEnabled ? 'text-emerald-400 font-bold' : 'text-rose-400 font-bold';
+          }
+          if (ovlEl) {
+            ovlEl.textContent = st.overlayEnabled ? '✅ ĐÃ BẬT' : '⚠️ CHƯA BẬT';
+            ovlEl.className = st.overlayEnabled ? 'text-emerald-400 font-bold' : 'text-rose-400 font-bold';
+          }
+          if (batEl) {
+            batEl.textContent = st.batteryIgnored ? '✅ ĐÃ BẬT 24/7' : '⚠️ CẦN CẤP QUYỀN';
+            batEl.className = st.batteryIgnored ? 'text-emerald-400 font-bold' : 'text-amber-300 font-bold';
+          }
+        }
+      } catch (e) {
+        // Browser mode
+      }
+    }
+
+    function triggerNativePermission(kind) {
+      playSound('click');
+      if (window.AndroidNative) {
+        try {
+          if (kind === 'accessibility' && window.AndroidNative.openAccessibilitySettings) {
+            window.AndroidNative.openAccessibilitySettings();
+            return;
+          }
+          if (kind === 'overlay' && window.AndroidNative.openOverlaySettings) {
+            window.AndroidNative.openOverlaySettings();
+            return;
+          }
+          if (kind === 'battery' && window.AndroidNative.requestIgnoreBatteryOptimizations) {
+            window.AndroidNative.requestIgnoreBatteryOptimizations();
+            return;
+          }
+        } catch (e) {}
+      }
+      openApkModal();
+      showToast('Nút này sẽ mở trực tiếp Cài đặt hệ thống Android khi bạn chạy từ file .APK trên điện thoại!', '📲');
+    }
+
+    function scanDeviceInstalledApps() {
+      playSound('click');
+      if (window.AndroidNative && typeof window.AndroidNative.getInstalledAppsJson === 'function') {
+        try {
+          const raw = window.AndroidNative.getInstalledAppsJson();
+          const installed = JSON.parse(raw);
+          let addedCount = 0;
+          installed.forEach(item => {
+            const exists = state.apps.some(a => a.packageName === item.packageName || a.name.toLowerCase() === item.name.toLowerCase());
+            if (!exists) {
+              state.apps.push({
+                id: 'pkg_' + item.packageName.replace(/[^a-zA-Z0-9]/g, '_'),
+                packageName: item.packageName,
+                name: item.name,
+                category: 'App trên máy',
+                icon: '📱',
+                locked: false,
+                unlockRemainingSec: 0,
+                blocksToday: 0
+              });
+              addedCount++;
+            }
+          });
+          saveState();
+          renderAll();
+          showToast(`Đã quét và nạp thêm ${addedCount} ứng dụng thực tế từ điện thoại của bạn!`, '✅');
+          return;
+        } catch (e) {}
+      }
+      // Demo simulation in web preview
+      const sampleApps = [
+        { id: 'zalo', packageName: 'com.zing.zalo', name: 'Zalo', category: 'Nhắn tin', icon: '💬' },
+        { id: 'capcut', packageName: 'com.lemon.lvoverseas', name: 'CapCut', category: 'Chỉnh sửa video', icon: '🎬' },
+        { id: 'freefire', packageName: 'com.dts.freefireth', name: 'Free Fire / PUBG', category: 'Trò chơi', icon: '🔫' }
+      ];
+      let added = 0;
+      sampleApps.forEach(s => {
+        if (!state.apps.some(a => a.id === s.id)) {
+          state.apps.push({ ...s, locked: true, unlockRemainingSec: 0, blocksToday: 0 });
+          added++;
+        }
+      });
+      saveState();
+      renderAll();
+      showToast(added > 0 ? `Đã quét và thêm ${added} ứng dụng mới vào danh sách quản lý!` : 'Danh sách ứng dụng trên máy đã được cập nhật đầy đủ!', '🔍');
+    }
+
+    // Called automatically by Android MainActivity when an app is intercepted by AccessibilityService
+    window.onNativeAppIntercepted = function(pkgName, appLabel) {
+      let matched = state.apps.find(a => a.packageName === pkgName || (ANDROID_PACKAGE_MAP[a.id] && ANDROID_PACKAGE_MAP[a.id].includes(pkgName)));
+      if (!matched) {
+        matched = {
+          id: 'pkg_' + pkgName.replace(/[^a-zA-Z0-9]/g, '_'),
+          packageName: pkgName,
+          name: appLabel || pkgName,
+          category: 'Ứng dụng hệ thống',
+          icon: '🔒',
+          locked: true,
+          unlockRemainingSec: 0,
+          blocksToday: 0
+        };
+        state.apps.unshift(matched);
+      }
+      simulateOpenApp(matched.id);
+    };
+
+    function saveState() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      } catch (e) {
+        // Ignore storage error in restricted sandboxes
+      }
+      syncWithAndroidNative();
+    }
+
+    // =========================================================================
+    // WEB AUDIO SYNTHESIZER (CRISP SOUND EFFECTS)
+    // =========================================================================
+    let audioCtx = null;
+    function playSound(kind) {
+      if (!state.soundEnabled) return;
+      try {
+        if (!audioCtx) {
+          const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+          if (AudioContextClass) audioCtx = new AudioContextClass();
+        }
+        if (!audioCtx) return;
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+
+        const now = audioCtx.currentTime;
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+
+        if (kind === 'rep') {
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(520, now);
+          osc.frequency.exponentialRampToValueAtTime(880, now + 0.12);
+          gain.gain.setValueAtTime(0.18, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.14);
+          osc.start(now);
+          osc.stop(now + 0.15);
+        } else if (kind === 'win') {
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(440, now);
+          osc.frequency.setValueAtTime(554.37, now + 0.1);
+          osc.frequency.setValueAtTime(659.25, now + 0.2);
+          osc.frequency.setValueAtTime(880, now + 0.32);
+          gain.gain.setValueAtTime(0.22, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.55);
+          osc.start(now);
+          osc.stop(now + 0.56);
+        } else if (kind === 'alarm') {
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(280, now);
+          osc.frequency.setValueAtTime(210, now + 0.12);
+          gain.gain.setValueAtTime(0.15, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.26);
+          osc.start(now);
+          osc.stop(now + 0.27);
+        } else {
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(600, now);
+          gain.gain.setValueAtTime(0.08, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.06);
+          osc.start(now);
+          osc.stop(now + 0.07);
+        }
+      } catch (e) {
+        // Ignore audio errors
+      }
+    }
+
+    function showToast(msg, icon = '✅') {
+      const box = document.getElementById('toastBox');
+      const iconEl = document.getElementById('toastIcon');
+      const msgEl = document.getElementById('toastMessage');
+      if (!box || !iconEl || !msgEl) return;
+      iconEl.textContent = icon;
+      msgEl.textContent = msg;
+      box.classList.remove('hidden');
+      clearTimeout(window._toastTimer);
+      window._toastTimer = setTimeout(() => {
+        box.classList.add('hidden');
+      }, 3200);
+    }
+
+    // =========================================================================
+    // LEVEL & RANK CALCULATIONS
+    // =========================================================================
+    function getLevelInfo() {
+      const level = Math.floor(state.xp / 500) + 1;
+      const currentLevelXp = state.xp % 500;
+      const pct = Math.min(100, Math.round((currentLevelXp / 500) * 100));
+      let rankObj = RANKS[0];
+      for (const r of RANKS) {
+        if (level >= r.minLvl) rankObj = r;
+      }
+      return { level, currentLevelXp, nextLevelXp: 500, pct, rankObj };
+    }
+
+    function renderHeroSvg(skinId, size = 140, animPhase = 0) {
+      const skin = HERO_SKINS.find(s => s.id === skinId) || HERO_SKINS[0];
+      const bobY = Math.sin(animPhase) * 4;
+      let weaponSvg = '';
+      if (skin.weapon === 'katana') {
+        weaponSvg = `<path d="M98 30 L122 85 L116 88 L92 33 Z" fill="${skin.primary}" /><rect x="88" y="25" width="12" height="6" rx="2" fill="${skin.secondary}"/>`;
+      } else if (skin.weapon === 'hammer') {
+        weaponSvg = `<rect x="102" y="38" width="5" height="55" fill="#94a3b8"/><rect x="92" y="26" width="25" height="15" rx="3" fill="${skin.primary}"/>`;
+      } else if (skin.weapon === 'spear') {
+        weaponSvg = `<rect x="104" y="22" width="4" height="72" fill="${skin.secondary}"/><polygon points="106,10 98,26 114,26" fill="${skin.primary}"/>`;
+      } else if (skin.weapon === 'halberd') {
+        weaponSvg = `<rect x="104" y="20" width="4" height="74" fill="#cbd5e1"/><path d="M106 14 L122 28 L106 40 Z" fill="${skin.primary}"/>`;
+      } else if (skin.weapon === 'daggers') {
+        weaponSvg = `<polygon points="18,62 6,82 24,70" fill="${skin.primary}"/><polygon points="102,62 114,82 96,70" fill="${skin.secondary}"/>`;
+      } else {
+        weaponSvg = `<path d="M95 45 L115 52 L110 78 L95 86 L85 75 L85 52 Z" fill="${skin.primary}" fill-opacity="0.85" stroke="${skin.secondary}" stroke-width="2"/>`;
+      }
+
+      return `
+        <svg viewBox="0 0 128 128" width="${size}" height="${size}" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <radialGradient id="aura-${skin.id}" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="${skin.primary}" stop-opacity="0.35"/>
+              <stop offset="100%" stop-color="${skin.primary}" stop-opacity="0"/>
+            </radialGradient>
+          </defs>
+          <circle cx="64" cy="64" r="56" fill="url(#aura-${skin.id})" />
+          <ellipse cx="64" cy="112" rx="30" ry="6" fill="${skin.primary}" fill-opacity="0.25" />
+          <g transform="translate(0, ${bobY.toFixed(1)})">
+            <!-- Legs -->
+            <rect x="47" y="80" width="12" height="26" rx="5" fill="#1e293b" stroke="${skin.primary}" stroke-width="2"/>
+            <rect x="69" y="80" width="12" height="26" rx="5" fill="#1e293b" stroke="${skin.primary}" stroke-width="2"/>
+            <!-- Torso Armor -->
+            <path d="M40 48 L88 48 L82 82 L46 82 Z" fill="#0f172a" stroke="${skin.primary}" stroke-width="2.5"/>
+            <!-- Core Reactor -->
+            <polygon points="64,55 72,64 64,73 56,64" fill="${skin.primary}"/>
+            <!-- Shoulders -->
+            <rect x="26" y="48" width="16" height="24" rx="6" fill="#1e293b" stroke="${skin.secondary}" stroke-width="2"/>
+            <rect x="86" y="48" width="16" height="24" rx="6" fill="#1e293b" stroke="${skin.secondary}" stroke-width="2"/>
+            <!-- Helmet -->
+            <rect x="44" y="18" width="40" height="28" rx="10" fill="#0f172a" stroke="${skin.primary}" stroke-width="2.5"/>
+            <!-- Glowing Visor -->
+            <rect x="50" y="27" width="28" height="8" rx="4" fill="${skin.primary}"/>
+            ${weaponSvg}
+          </g>
+        </svg>
+      `;
+    }
+
+    // =========================================================================
+    // TAB NAVIGATION & UI RENDERING
+    // =========================================================================
+    function switchTab(tabId) {
+      state.activeTab = tabId;
+      saveState();
+      const tabs = ['blocker', 'workout', 'rpg', 'quests', 'stats'];
+      for (const t of tabs) {
+        const sec = document.getElementById('tab-' + t);
+        const btn = document.getElementById('navBtn-' + t);
+        if (sec) {
+          if (t === tabId) sec.classList.remove('hidden');
+          else sec.classList.add('hidden');
+        }
+        if (btn) {
+          if (t === tabId) {
+            btn.className = 'flex flex-col items-center justify-center py-1.5 rounded-xl bg-teal-500/15 text-teal-300 border border-teal-500/30 transition';
+          } else {
+            btn.className = 'flex flex-col items-center justify-center py-1.5 rounded-xl text-slate-400 hover:text-slate-200 transition';
+          }
+        }
+      }
+      if (tabId === 'stats') {
+        setTimeout(renderStatsChart, 60);
+      }
+      renderAll();
+    }
+
+    function formatTimeRemaining(sec) {
+      const m = Math.floor(sec / 60);
+      const s = sec % 60;
+      return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+    }
+
+    // =========================================================================
+    // TAB 1: SMART APP BLOCKER LOGIC
+    // =========================================================================
+    let currentInterceptAppId = null;
+    let activeUnlockTargetAppId = null;
+
+    function setUnlockDuration(mins) {
+      state.defaultUnlockMins = mins;
+      const sel = document.getElementById('selectRewardMins');
+      if (sel) sel.value = String(mins);
+      saveState();
+      playSound('click');
+      renderAll();
+    }
+
+    function setDefaultReps(reps) {
+      state.defaultTargetReps = reps;
+      workoutState.targetReps = reps;
+      const sel = document.getElementById('selectTargetReps');
+      if (sel) sel.value = String(reps);
+      saveState();
+      playSound('click');
+      renderAll();
+    }
+
+    function toggleAppLock(appId) {
+      const app = state.apps.find(a => a.id === appId);
+      if (!app) return;
+      app.locked = !app.locked;
+      if (app.locked) app.unlockRemainingSec = 0;
+      saveState();
+      playSound('click');
+      showToast(
+        app.locked
+          ? `Đã khóa ${app.name} bằng thử thách vận động!`
+          : `Đã gỡ khóa cho ${app.name}.`,
+        app.locked ? '🔒' : '🔓'
+      );
+      renderAll();
+    }
+
+    function toggleAllApps(lockStatus) {
+      state.apps.forEach(a => {
+        a.locked = lockStatus;
+        if (lockStatus) a.unlockRemainingSec = 0;
+      });
+      saveState();
+      playSound('click');
+      showToast('Đã khóa tất cả ứng dụng trong danh sách!', '🛡️');
+      renderAll();
+    }
+
+    function simulateOpenApp(appId) {
+      const app = state.apps.find(a => a.id === appId);
+      if (!app) return;
+
+      // If unlocked or has remaining unlocked timer
+      if (!app.locked || app.unlockRemainingSec > 0) {
+        showToast(
+          `${app.name} đang được phép truy cập (${app.unlockRemainingSec > 0 ? 'Còn ' + formatTimeRemaining(app.unlockRemainingSec) : 'Không khóa'}).`,
+          '✅'
+        );
+        return;
+      }
+
+      // Trigger ActionLock Intercept Overlay!
+      currentInterceptAppId = app.id;
+      app.blocksToday = (app.blocksToday || 0) + 1;
+      state.totalIntercepts += 1;
+      saveState();
+      playSound('alarm');
+
+      const ex = EXERCISES.find(e => e.id === state.selectedExercise) || EXERCISES[0];
+      const iconEl = document.getElementById('interceptAppIcon');
+      const titleEl = document.getElementById('interceptTitle');
+      const exBadge = document.getElementById('interceptExerciseBadge');
+      const rewBadge = document.getElementById('interceptRewardBadge');
+      const tbAvail = document.getElementById('interceptTimeBankAvail');
+
+      if (iconEl) iconEl.textContent = app.icon;
+      if (titleEl) {
+        titleEl.textContent = state.lang === 'vi'
+          ? `${app.name} Đang Bị Chặn Bởi ActionLock!`
+          : `${app.name} Is Locked by ActionLock!`;
+      }
+      if (exBadge) {
+        exBadge.textContent = `${state.defaultTargetReps} nhịp ${state.lang === 'vi' ? ex.nameVi : ex.nameEn}`;
+      }
+      if (rewBadge) {
+        const xpGain = state.defaultTargetReps * ex.xpPerRep;
+        rewBadge.textContent = `+${state.defaultUnlockMins} phút & +${xpGain} XP`;
+      }
+      if (tbAvail) tbAvail.textContent = String(state.timeBankMins);
+
+      document.getElementById('interceptModal').classList.remove('hidden');
+      renderAll();
+    }
+
+    function acceptInterceptChallenge() {
+      document.getElementById('interceptModal').classList.add('hidden');
+      activeUnlockTargetAppId = currentInterceptAppId;
+      workoutState.reps = 0;
+      workoutState.targetReps = state.defaultTargetReps;
+      workoutState.rewardMins = state.defaultUnlockMins;
+      switchTab('workout');
+      showToast('Hãy hoàn thành các nhịp tập để mở khóa ứng dụng!', '💪');
+    }
+
+    function spendTimeBankForIntercept() {
+      const app = state.apps.find(a => a.id === currentInterceptAppId);
+      if (!app) return;
+      if (state.timeBankMins < 15) {
+        showToast('Quỹ thời gian cần tối thiểu 15 phút! Hãy tập luyện để tích lũy thêm.', '⚠️');
+        return;
+      }
+      state.timeBankMins -= 15;
+      app.unlockRemainingSec = 15 * 60;
+      state.logs.unshift({
+        time: 'Vừa xong',
+        text: `Dùng 15 phút từ Quỹ Thời Gian ➔ Mở khóa ${app.name}`
+      });
+      document.getElementById('interceptModal').classList.add('hidden');
+      saveState();
+      playSound('win');
+      showToast(`Đã mở khóa ${app.name} trong 15 phút từ Quỹ Thời Gian!`, '⏱️');
+      renderAll();
+    }
+
+    function resistScrollUrge() {
+      const app = state.apps.find(a => a.id === currentInterceptAppId);
+      document.getElementById('interceptModal').classList.add('hidden');
+      state.xp += 25;
+      state.coins += 15;
+      updateQuestProgress('intercept', 1);
+      state.logs.unshift({
+        time: 'Vừa xong',
+        text: `Từ bỏ mở ${app ? app.name : 'App'} ➔ Nhận thưởng Kỷ Luật (+25 XP, +15 Xu)`
+      });
+      saveState();
+      playSound('win');
+      showToast('Tuyệt vời! Bạn đã chiến thắng cơn cám dỗ (+25 XP & +15 Xu)!', '🧘');
+      renderAll();
+    }
+
+    function openAddAppModal() {
+      document.getElementById('addAppModal').classList.remove('hidden');
+    }
+    function closeAddAppModal() {
+      document.getElementById('addAppModal').classList.add('hidden');
+    }
+    function saveCustomApp() {
+      const nameInput = document.getElementById('inputCustomAppName');
+      const catInput = document.getElementById('inputCustomAppCategory');
+      const iconInput = document.getElementById('inputCustomAppIcon');
+      const name = (nameInput.value || '').trim();
+      if (!name) {
+        showToast('Vui lòng nhập tên ứng dụng!', '⚠️');
+        return;
+      }
+      state.apps.unshift({
+        id: 'custom_' + Date.now(),
+        name: name,
+        category: catInput.value || 'Ứng dụng',
+        icon: iconInput.value || '📱',
+        locked: true,
+        unlockRemainingSec: 0,
+        blocksToday: 0
+      });
+      nameInput.value = '';
+      closeAddAppModal();
+      saveState();
+      playSound('win');
+      showToast(`Đã thêm và khóa ứng dụng ${name}!`, '🔒');
+      renderAll();
+    }
+
+    function openTimeBankModal() {
+      const el = document.getElementById('modalTimeBankBalance');
+      if (el) el.textContent = `${state.timeBankMins} phút`;
+      document.getElementById('timeBankModal').classList.remove('hidden');
+    }
+    function closeTimeBankModal() {
+      document.getElementById('timeBankModal').classList.add('hidden');
+    }
+    function openApkModal() {
+      document.getElementById('apkModal').classList.remove('hidden');
+    }
+    function closeApkModal() {
+      document.getElementById('apkModal').classList.add('hidden');
+    }
+
+    function startFreeWorkout() {
+      activeUnlockTargetAppId = null;
+      workoutState.reps = 0;
+      workoutState.targetReps = state.defaultTargetReps;
+      workoutState.rewardMins = state.defaultUnlockMins;
+      switchTab('workout');
+    }
+
+    function switchToFreeWorkoutMode() {
+      activeUnlockTargetAppId = null;
+      renderAll();
+      showToast('Đã chuyển sang chế độ Tập Tự Do (Cộng giờ vào Quỹ Thời Gian)!', '💪');
+    }
+
+    // =========================================================================
+    // TAB 2: AI REP COUNTER & VISION ENGINE
+    // =========================================================================
+    const workoutState = {
+      reps: 0,
+      targetReps: 15,
+      rewardMins: 30,
+      sessionActive: false,
+      elapsedSec: 0,
+      phase: 'UP', // 'UP' or 'DOWN'
+      animAngle: 0,
+      webcamActive: false,
+      stream: null,
+      prevFrameData: null,
+      smoothedY: 0.35,
+      lastRepTime: 0
+    };
+
+    function selectExercise(exId) {
+      state.selectedExercise = exId;
+      saveState();
+      playSound('click');
+      renderAll();
+    }
+
+    function setDetectionMode(mode) {
+      state.detectionMode = mode;
+      const overlay = document.getElementById('noseTapOverlay');
+      if (overlay) {
+        if (mode === 'tap') overlay.classList.remove('hidden');
+        else overlay.classList.add('hidden');
+      }
+      saveState();
+      playSound('click');
+      renderAll();
+    }
+
+    function updateSensitivity(val) {
+      state.sensitivity = parseInt(val, 10) || 50;
+      saveState();
+    }
+
+    function changeWorkoutTargetReps(val) {
+      const n = parseInt(val, 10) || 15;
+      workoutState.targetReps = n;
+      state.defaultTargetReps = n;
+      saveState();
+      renderAll();
+    }
+
+    function changeWorkoutRewardMins(val) {
+      const m = parseInt(val, 10) || 30;
+      workoutState.rewardMins = m;
+      state.defaultUnlockMins = m;
+      saveState();
+      renderAll();
+    }
+
+    async function toggleWebcamStream() {
+      const video = document.getElementById('webcamVideo');
+      const btn = document.getElementById('btnToggleCamera');
+      const statusEl = document.getElementById('hudDetectionStatus');
+
+      if (workoutState.webcamActive && workoutState.stream) {
+        workoutState.stream.getTracks().forEach(t => t.stop());
+        workoutState.stream = null;
+        workoutState.webcamActive = false;
+        if (video) video.classList.add('hidden');
+        if (btn) btn.textContent = '📷 Bật Camera Thật (WebRTC)';
+        if (statusEl) statusEl.textContent = 'VISION: AI POSE SIMULATOR';
+        showToast('Đã tắt Camera.', '📷');
+        return;
+      }
+
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        showToast('Trình duyệt hiện tại không hỗ trợ WebRTC Camera — Đã kích hoạt AI Cadence Vision!', '🤖');
+        if (!workoutState.sessionActive) toggleWorkoutSession();
+        return;
+      }
+
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: 'user', width: { ideal: 320 }, height: { ideal: 240 } },
+          audio: false
+        });
+        workoutState.stream = stream;
+        workoutState.webcamActive = true;
+        if (video) {
+          video.srcObject = stream;
+          video.classList.remove('hidden');
+        }
+        if (btn) btn.textContent = '⏹️ Tắt Camera';
+        if (statusEl) statusEl.textContent = 'VISION: LIVE CAMERA ACTIVE';
+        if (!workoutState.sessionActive) {
+          workoutState.sessionActive = true;
+        }
+        showToast('Camera AI On-Device đã bật! Di chuyển cơ thể xuống & lên để đếm nhịp.', '📷');
+        renderAll();
+      } catch (err) {
+        showToast('Không thể truy cập Camera trong khung xem trước — Đã bật chế độ AI Dẫn Nhịp Tự Động!', '🤖');
+        if (!workoutState.sessionActive) toggleWorkoutSession();
+      }
+    }
+
+    function toggleWorkoutSession() {
+      workoutState.sessionActive = !workoutState.sessionActive;
+      const statusEl = document.getElementById('hudDetectionStatus');
+      if (statusEl) {
+        statusEl.textContent = workoutState.sessionActive
+          ? (workoutState.webcamActive ? 'VISION: LIVE CAMERA ACTIVE' : 'VISION: AI COACH ACTIVE')
+          : 'VISION: STANDBY';
+      }
+      playSound('click');
+      renderAll();
+    }
+
+    function triggerManualRep() {
+      const now = Date.now();
+      if (now - workoutState.lastRepTime < 280) return; // debounce
+      workoutState.lastRepTime = now;
+
+      workoutState.reps += 1;
+      workoutState.phase = 'UP';
+      playSound('rep');
+
+      const ex = EXERCISES.find(e => e.id === state.selectedExercise) || EXERCISES[0];
+      const kcal = (workoutState.reps * ex.kcalPerRep).toFixed(1);
+      const xp = workoutState.reps * ex.xpPerRep;
+
+      const calEl = document.getElementById('hudCalorieCounter');
+      const xpEl = document.getElementById('hudXpEarned');
+      const motEl = document.getElementById('repMotivationalText');
+      if (calEl) calEl.textContent = `${kcal} kcal`;
+      if (xpEl) xpEl.textContent = `+${xp} XP`;
+      if (motEl) {
+        motEl.textContent = `Nhịp #${workoutState.reps} chuẩn xác! Tiếp tục giữ nhịp độ kỷ luật!`;
+      }
+
+      renderWorkoutCounterUI();
+
+      if (workoutState.reps >= workoutState.targetReps) {
+        finishWorkoutSet(false);
+      }
+    }
+
+    function resetCurrentWorkout() {
+      workoutState.reps = 0;
+      workoutState.elapsedSec = 0;
+      workoutState.sessionActive = false;
+      playSound('click');
+      renderAll();
+    }
+
+    function finishWorkoutSet(early) {
+      if (workoutState.reps <= 0) {
+        showToast('Hãy thực hiện ít nhất 1 nhịp tập trước khi hoàn thành hiệp!', '⚠️');
+        return;
+      }
+      workoutState.sessionActive = false;
+      const repsDone = workoutState.reps;
+      const ex = EXERCISES.find(e => e.id === state.selectedExercise) || EXERCISES[0];
+      const earnedXp = repsDone * ex.xpPerRep;
+      const earnedCoins = repsDone * ex.coinsPerRep;
+      const earnedKcal = +(repsDone * ex.kcalPerRep).toFixed(1);
+      const scaleRatio = Math.min(1, repsDone / workoutState.targetReps);
+      const earnedMins = Math.max(5, Math.round(workoutState.rewardMins * scaleRatio));
+
+      state.xp += earnedXp;
+      state.coins += earnedCoins;
+      state.totalReps += repsDone;
+      state.todayReps += repsDone;
+      state.totalCalories = +(state.totalCalories + earnedKcal).toFixed(1);
+      state.totalEarnedMins += earnedMins;
+      state.setsCompleted += 1;
+      state.exerciseCounts[ex.id] = (state.exerciseCounts[ex.id] || 0) + repsDone;
+      state.weeklyHistory[6] = state.todayReps;
+
+      // Update Quests
+      if (ex.id === 'pushups') updateQuestProgress('pushups', repsDone);
+      if (ex.id === 'squats' || ex.id === 'lunges') updateQuestProgress('legs', repsDone);
+      if (ex.id === 'situps') updateQuestProgress('situps', repsDone);
+      updateQuestProgress('totalReps', repsDone);
+      updateQuestProgress('calories', Math.round(earnedKcal));
+      updateQuestProgress('earnedMins', earnedMins);
+
+      let targetDesc = '';
+      if (activeUnlockTargetAppId) {
+        const app = state.apps.find(a => a.id === activeUnlockTargetAppId);
+        if (app) {
+          app.unlockRemainingSec = (app.unlockRemainingSec || 0) + earnedMins * 60;
+          targetDesc = `Đã mở khóa ${app.name} trong ${earnedMins} phút!`;
+          updateQuestProgress('intercept', 1);
+          state.logs.unshift({
+            time: 'Vừa xong',
+            text: `Tập ${repsDone} nhịp ${ex.nameVi} ➔ Mở khóa ${app.name} ${earnedMins} phút (+${earnedXp} XP)`
+          });
+        }
+      } else {
+        state.timeBankMins += earnedMins;
+        targetDesc = `Đã cộng +${earnedMins} phút vào Quỹ Thời Gian (Time Bank)!`;
+        state.logs.unshift({
+          time: 'Vừa xong',
+          text: `Tập tự do ${repsDone} nhịp ${ex.nameVi} ➔ +${earnedMins} phút vào Quỹ (+${earnedXp} XP)`
+        });
+      }
+
+      workoutState.reps = 0;
+      activeUnlockTargetAppId = null;
+      saveState();
+      playSound('win');
+
+      // Show Celebration Modal
+      document.getElementById('rewardModalSubtitle').textContent = targetDesc;
+      document.getElementById('rewardMinsVal').textContent = `+${earnedMins}p`;
+      document.getElementById('rewardXpVal').textContent = `+${earnedXp} XP`;
+      document.getElementById('rewardCoinsVal').textContent = `+${earnedCoins} Xu`;
+      document.getElementById('rewardModal').classList.remove('hidden');
+      renderAll();
+    }
+
+    function closeRewardModal() {
+      document.getElementById('rewardModal').classList.add('hidden');
+    }
+
+    function updateQuestProgress(qType, amount) {
+      for (const q of state.dailyQuests) {
+        if (q.type === qType && !q.claimed) {
+          q.current = Math.min(q.target, q.current + amount);
+        }
+      }
+      for (const wq of state.weeklyQuests) {
+        if (wq.type === qType && !wq.claimed) {
+          wq.current = Math.min(wq.target, wq.current + amount);
+        }
+      }
+    }
+
+    // =========================================================================
+    // REAL-TIME AI POSE & CAMERA VISION CANVAS LOOP
+    // =========================================================================
+    const offscreenCanvas = document.createElement('canvas');
+    offscreenCanvas.width = 64;
+    offscreenCanvas.height = 48;
+    const offCtx = offscreenCanvas.getContext('2d', { willReadFrequently: true });
+
+    function drawVisionCanvas() {
+      const canvas = document.getElementById('visionCanvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      const W = canvas.width;
+      const H = canvas.height;
+      ctx.clearRect(0, 0, W, H);
+
+      // Draw tactical grid & zones
+      ctx.strokeStyle = 'rgba(0, 245, 212, 0.14)';
+      ctx.lineWidth = 1;
+      for (let x = 0; x < W; x += 40) {
+        ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke();
+      }
+      for (let y = 0; y < H; y += 40) {
+        ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
+      }
+
+      // Draw UP threshold line and DOWN threshold line
+      const upLineY = H * 0.36;
+      const downLineY = H * 0.66;
+
+      ctx.strokeStyle = 'rgba(56, 189, 248, 0.5)';
+      ctx.setLineDash([6, 6]);
+      ctx.beginPath(); ctx.moveTo(30, upLineY); ctx.lineTo(W - 30, upLineY); ctx.stroke();
+      ctx.fillStyle = 'rgba(56, 189, 248, 0.85)';
+      ctx.font = 'bold 11px JetBrains Mono, monospace';
+      ctx.fillText('▲ UP ZONE (ĐỈNH NHỊP)', 36, upLineY - 8);
+
+      ctx.strokeStyle = 'rgba(0, 245, 212, 0.6)';
+      ctx.beginPath(); ctx.moveTo(30, downLineY); ctx.lineTo(W - 30, downLineY); ctx.stroke();
+      ctx.fillStyle = 'rgba(0, 245, 212, 0.9)';
+      ctx.fillText('▼ DOWN ZONE (HẠ THẤP NGƯỜI QUA VẠCH NÀY)', 36, downLineY + 16);
+      ctx.setLineDash([]);
+
+      // Camera Motion Centroid Analysis if live webcam is on
+      const video = document.getElementById('webcamVideo');
+      if (workoutState.webcamActive && video && video.readyState >= 2) {
+        try {
+          offCtx.drawImage(video, 0, 0, 64, 48);
+          const frame = offCtx.getImageData(0, 0, 64, 48).data;
+          if (workoutState.prevFrameData) {
+            let weightedY = 0;
+            let totalDiff = 0;
+            const thresh = 95 - state.sensitivity * 0.65;
+            for (let y = 0; y < 48; y++) {
+              for (let x = 0; x < 64; x++) {
+                const idx = (y * 64 + x) * 4;
+                const diff = Math.abs(frame[idx] - workoutState.prevFrameData[idx]) +
+                             Math.abs(frame[idx + 1] - workoutState.prevFrameData[idx + 1]) +
+                             Math.abs(frame[idx + 2] - workoutState.prevFrameData[idx + 2]);
+                if (diff > thresh * 3) {
+                  weightedY += (y / 48) * diff;
+                  totalDiff += diff;
+                }
+              }
+            }
+            if (totalDiff > 12000) {
+              const targetNormY = weightedY / totalDiff;
+              workoutState.smoothedY = workoutState.smoothedY * 0.72 + targetNormY * 0.28;
+            }
+          }
+          workoutState.prevFrameData = new Uint8ClampedArray(frame);
+        } catch (e) {
+          // Ignore frame read issues
+        }
+      } else if (workoutState.sessionActive) {
+        // AI Biomechanical Cadence Simulation (~2.4 sec per full rep cycle)
+        workoutState.animAngle += 0.048;
+        workoutState.smoothedY = 0.50 + Math.sin(workoutState.animAngle) * 0.24;
+      } else {
+        workoutState.animAngle += 0.02;
+        workoutState.smoothedY = 0.34 + Math.sin(workoutState.animAngle) * 0.03;
+      }
+
+      // Check DOWN -> UP state transitions to count reps automatically
+      const normY = workoutState.smoothedY;
+      const phaseEl = document.getElementById('hudPhaseText');
+      if (workoutState.sessionActive || workoutState.webcamActive) {
+        if (normY > 0.62 && workoutState.phase === 'UP') {
+          workoutState.phase = 'DOWN';
+          if (phaseEl) {
+            phaseEl.textContent = 'DOWN (ĐÃ HẠ XUỐNG)';
+            phaseEl.className = 'text-teal-300 font-bold';
+          }
+        } else if (normY < 0.40 && workoutState.phase === 'DOWN') {
+          workoutState.phase = 'UP';
+          if (phaseEl) {
+            phaseEl.textContent = 'REP +1 (ĐÃ NÂNG LÊN!)';
+            phaseEl.className = 'text-emerald-400 font-bold';
+          }
+          triggerManualRep();
+        }
+      }
+
+      // Draw Animated AI Pose Skeleton for the selected exercise
+      drawPoseSkeleton(ctx, W, H, normY, state.selectedExercise);
+    }
+
+    function drawPoseSkeleton(ctx, W, H, normY, exerciseId) {
+      const cx = W / 2;
+      // Map normY (0.26..0.74) to progress t (0 = UP, 1 = DOWN)
+      const t = Math.max(0, Math.min(1, (normY - 0.32) / 0.36));
+      const color = workoutState.phase === 'DOWN' ? '#00f5d4' : '#38bdf8';
+
+      ctx.strokeStyle = color;
+      ctx.fillStyle = color;
+      ctx.lineWidth = 5;
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+
+      let joints = [];
+      if (exerciseId === 'pushups') {
+        const bodyY = 145 + t * 110;
+        const headX = cx - 110, headY = bodyY - 12;
+        const shoulderX = cx - 65, shoulderY = bodyY;
+        const elbowX = cx - 40, elbowY = bodyY + (25 - t * 18);
+        const handX = cx - 60, handY = 295;
+        const hipX = cx + 25, hipY = bodyY + 15;
+        const ankleX = cx + 115, ankleY = 295;
+        joints = [
+          [headX, headY], [shoulderX, shoulderY], [elbowX, elbowY], [handX, handY],
+          [shoulderX, shoulderY], [hipX, hipY], [ankleX, ankleY]
+        ];
+        // Head circle
+        ctx.beginPath(); ctx.arc(headX, headY - 8, 16, 0, Math.PI * 2); ctx.stroke();
+      } else if (exerciseId === 'squats') {
+        const headY = 95 + t * 95;
+        const shoulderY = headY + 32;
+        const hipY = shoulderY + 65 + t * 20;
+        const kneeXOffset = 28 + t * 26;
+        const kneeY = 250;
+        const ankleXOffset = 28;
+        const ankleY = 325;
+        ctx.beginPath(); ctx.arc(cx, headY, 18, 0, Math.PI * 2); ctx.stroke();
+        // Torso
+        ctx.beginPath(); ctx.moveTo(cx, headY + 18); ctx.lineTo(cx, hipY); ctx.stroke();
+        // Arms forward
+        ctx.beginPath();
+        ctx.moveTo(cx - 35, shoulderY + 15 - t * 15);
+        ctx.lineTo(cx, shoulderY);
+        ctx.lineTo(cx + 35, shoulderY + 15 - t * 15);
+        ctx.stroke();
+        // Left & Right Legs
+        ctx.beginPath();
+        ctx.moveTo(cx, hipY); ctx.lineTo(cx - kneeXOffset, kneeY); ctx.lineTo(cx - ankleXOffset, ankleY);
+        ctx.moveTo(cx, hipY); ctx.lineTo(cx + kneeXOffset, kneeY); ctx.lineTo(cx + ankleXOffset, ankleY);
+        ctx.stroke();
+        joints = [[cx, shoulderY], [cx, hipY], [cx - kneeXOffset, kneeY], [cx + kneeXOffset, kneeY]];
+      } else if (exerciseId === 'situps') {
+        // Sit-up: t=1 is lying down, t=0 is sitting crunched up
+        const hipX = cx + 10, hipY = 285;
+        const kneeX = cx + 65, kneeY = 225;
+        const footX = cx + 105, footY = 290;
+        const torsoAngle = -Math.PI * (0.42 - t * 0.34);
+        const shoulderX = hipX - Math.cos(torsoAngle) * 85;
+        const shoulderY = hipY + Math.sin(torsoAngle) * 85;
+        const headX = shoulderX - Math.cos(torsoAngle) * 26;
+        const headY = shoulderY + Math.sin(torsoAngle) * 26;
+        ctx.beginPath(); ctx.arc(headX, headY, 16, 0, Math.PI * 2); ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(shoulderX, shoulderY); ctx.lineTo(hipX, hipY);
+        ctx.lineTo(kneeX, kneeY); ctx.lineTo(footX, footY);
+        ctx.stroke();
+        joints = [[shoulderX, shoulderY], [hipX, hipY], [kneeX, kneeY], [footX, footY]];
+      } else {
+        // Lunges
+        const headY = 95 + t * 85;
+        const shoulderY = headY + 30;
+        const hipY = shoulderY + 65;
+        ctx.beginPath(); ctx.arc(cx, headY, 17, 0, Math.PI * 2); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(cx, headY + 17); ctx.lineTo(cx, hipY); ctx.stroke();
+        // Front leg & back leg
+        const fKneeX = cx - 50, fKneeY = 235 + t * 25;
+        const fFootX = cx - 55, fFootY = 320;
+        const bKneeX = cx + 45, bKneeY = 250 + t * 50;
+        const bFootX = cx + 85, bFootY = 320;
+        ctx.beginPath();
+        ctx.moveTo(cx, hipY); ctx.lineTo(fKneeX, fKneeY); ctx.lineTo(fFootX, fFootY);
+        ctx.moveTo(cx, hipY); ctx.lineTo(bKneeX, bKneeY); ctx.lineTo(bFootX, bFootY);
+        ctx.stroke();
+        joints = [[cx, shoulderY], [cx, hipY], [fKneeX, fKneeY], [bKneeX, bKneeY]];
+      }
+
+      if (exerciseId === 'pushups') {
+        ctx.beginPath();
+        for (let i = 0; i < joints.length; i++) {
+          const [jx, jy] = joints[i];
+          if (i === 0 || i === 4) ctx.moveTo(jx, jy);
+          else ctx.lineTo(jx, jy);
+        }
+        ctx.stroke();
+      }
+
+      // Draw glowing AI keypoint nodes
+      for (const [jx, jy] of joints) {
+        ctx.fillStyle = '#090d16';
+        ctx.beginPath(); ctx.arc(jx, jy, 6, 0, Math.PI * 2); ctx.fill();
+        ctx.strokeStyle = '#a3e635';
+        ctx.lineWidth = 2.5;
+        ctx.beginPath(); ctx.arc(jx, jy, 6, 0, Math.PI * 2); ctx.stroke();
+      }
+
+      // Draw live Vertical Centroid Tracker Pill on right side
+      const trackerY = normY * H;
+      ctx.fillStyle = '#00f5d4';
+      ctx.beginPath();
+      ctx.arc(W - 22, trackerY, 8, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    // =========================================================================
+    // TAB 3 & TAB 4: HERO SKINS, QUESTS & REWARDS
+    // =========================================================================
+    function buyOrEquipSkin(skinId) {
+      const skin = HERO_SKINS.find(s => s.id === skinId);
+      if (!skin) return;
+
+      if (state.ownedSkins.includes(skinId)) {
+        state.equippedSkin = skinId;
+        saveState();
+        playSound('click');
+        showToast(`Đã trang bị ${skin.name}!`, '🛡️');
+        renderAll();
+        return;
+      }
+
+      if (state.coins < skin.price) {
+        showToast(`Bạn cần thêm ${skin.price - state.coins} Xu để mở khóa ${skin.name}!`, '🪙');
+        return;
+      }
+
+      state.coins -= skin.price;
+      state.ownedSkins.push(skinId);
+      state.equippedSkin = skinId;
+      saveState();
+      playSound('win');
+      showToast(`Đã mở khóa và trang bị ${skin.name}!`, '🎉');
+      renderAll();
+    }
+
+    function claimFreeBonusCoins() {
+      state.coins += 300;
+      saveState();
+      playSound('win');
+      showToast('Đã nhận +300 Xu Hành Động miễn phí (Bản Không Mất Phí)!', '🎁');
+      renderAll();
+    }
+
+    function claimQuestReward(questId, isWeekly) {
+      const list = isWeekly ? state.weeklyQuests : state.dailyQuests;
+      const q = list.find(item => item.id === questId);
+      if (!q || q.claimed || q.current < q.target) return;
+
+      q.claimed = true;
+      state.xp += q.xp;
+      state.coins += q.coins;
+      state.logs.unshift({
+        time: 'Vừa xong',
+        text: `Nhận thưởng nhiệm vụ "${q.titleVi}" (+${q.xp} XP, +${q.coins} Xu)`
+      });
+      saveState();
+      playSound('win');
+      showToast(`Đã nhận thưởng nhiệm vụ: +${q.xp} XP & +${q.coins} Xu!`, '🏆');
+      renderAll();
+    }
+
+    // =========================================================================
+    // TAB 5: STATS CHART & DATA EXPORT/RESET
+    // =========================================================================
+    let statsChartInstance = null;
+    function renderStatsChart() {
+      const canvas = document.getElementById('weeklyStatsChart');
+      if (!canvas || typeof Chart === 'undefined') return;
+      if (statsChartInstance) {
+        statsChartInstance.destroy();
+      }
+      const labels = state.lang === 'vi'
+        ? ['T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'Hôm nay']
+        : ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Today'];
+
+      statsChartInstance = new Chart(canvas, {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: [
+            {
+              label: state.lang === 'vi' ? 'Số nhịp tập (Reps)' : 'Exercise Reps',
+              data: state.weeklyHistory,
+              backgroundColor: 'rgba(0, 245, 212, 0.75)',
+              borderColor: '#00f5d4',
+              borderWidth: 1.5,
+              borderRadius: 8
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              labels: { color: '#94a3b8', font: { family: 'Inter', size: 11 } }
+            }
+          },
+          scales: {
+            x: {
+              ticks: { color: '#94a3b8' },
+              grid: { color: 'rgba(148, 163, 184, 0.08)' }
+            },
+            y: {
+              beginAtZero: true,
+              ticks: { color: '#94a3b8' },
+              grid: { color: 'rgba(148, 163, 184, 0.12)' }
+            }
+          }
+        }
+      });
+    }
+
+    function exportUserData() {
+      const summary = `ActionLock Free Stats — Level ${getLevelInfo().level} | Tổng nhịp: ${state.totalReps} | Thời gian mở khóa kiếm được: ${state.totalEarnedMins} phút | Calories: ${state.totalCalories} kcal | Chuỗi: ${state.streakDays} ngày`;
+      try {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(summary);
+        } else {
+          const ta = document.createElement('textarea');
+          ta.value = summary;
+          document.body.appendChild(ta);
+          ta.select();
+          document.execCommand('copy');
+          document.body.removeChild(ta);
+        }
+      } catch (e) {
+        // Fallback
+      }
+      showToast('Đã sao chép báo cáo thành tích vào bộ nhớ tạm!', '📋');
+    }
+
+    function resetAllUserData() {
+      state = getDefaultState();
+      saveState();
+      playSound('click');
+      showToast('Đã đặt lại dữ liệu mặc định!', '🔄');
+      renderAll();
+    }
+
+    // =========================================================================
+    // TOP CONTROLS: SOUND, THEME, LANGUAGE
+    // =========================================================================
+    function toggleSound() {
+      state.soundEnabled = !state.soundEnabled;
+      saveState();
+      renderAll();
+      showToast(state.soundEnabled ? 'Đã bật âm thanh hiệu ứng!' : 'Đã tắt âm thanh.', state.soundEnabled ? '🔊' : '🔇');
+    }
+
+    function toggleTheme() {
+      state.theme = state.theme === 'dark' ? 'light' : 'dark';
+      saveState();
+      applyTheme();
+      renderAll();
+    }
+
+    function applyTheme() {
+      const root = document.documentElement;
+      const body = document.body;
+      if (state.theme === 'light') {
+        root.classList.remove('dark');
+        root.classList.add('light');
+        body.className = 'bg-slate-100 text-slate-900 cyber-grid min-h-screen flex flex-col';
+      } else {
+        root.classList.add('dark');
+        root.classList.remove('light');
+        body.className = 'bg-slate-950 text-slate-100 cyber-grid min-h-screen flex flex-col';
+      }
+    }
+
+    function toggleLanguage() {
+      state.lang = state.lang === 'vi' ? 'en' : 'vi';
+      saveState();
+      playSound('click');
+      renderAll();
+      showToast(state.lang === 'vi' ? 'Đã chuyển sang Tiếng Việt!' : 'Switched to English!', '🌐');
+    }
+
+    // =========================================================================
+    // MASTER RENDER FUNCTION
+    // =========================================================================
+    function renderWorkoutCounterUI() {
+      const liveEl = document.getElementById('liveRepCount');
+      const targEl = document.getElementById('targetRepCount');
+      const barEl = document.getElementById('repProgressBar');
+      if (liveEl) liveEl.textContent = String(workoutState.reps);
+      if (targEl) targEl.textContent = String(workoutState.targetReps);
+      if (barEl) {
+        const pct = Math.min(100, Math.round((workoutState.reps / workoutState.targetReps) * 100));
+        barEl.style.width = pct + '%';
+      }
+    }
+
+    function renderAll() {
+      refreshAndroidNativeStatus();
+      const isVi = state.lang === 'vi';
+      const lvlInfo = getLevelInfo();
+
+      // Header badges
+      const lockedCount = state.apps.filter(a => a.locked && a.unlockRemainingSec <= 0).length;
+      document.getElementById('headerLockedCount').textContent = isVi
+        ? `${lockedCount} App đang khóa`
+        : `${lockedCount} Apps Locked`;
+      document.getElementById('headerTimeBank').textContent = `${state.timeBankMins}p`;
+      document.getElementById('headerCoins').textContent = String(state.coins);
+      document.getElementById('headerStreak').textContent = String(state.streakDays);
+      document.getElementById('soundIcon').textContent = state.soundEnabled ? '🔊' : '🔇';
+      document.getElementById('themeIcon').textContent = state.theme === 'dark' ? '🌙' : '☀️';
+      document.getElementById('langLabel').textContent = state.lang.toUpperCase();
+
+      // Language strings for Hero & Nav
+      document.getElementById('heroTitle').textContent = isVi
+        ? 'Đổi Thời Gian Lướt Vô Thức Lấy Vận Động & Kỷ Luật'
+        : 'Exercise to Unlock Screen Time & Break the Scroll';
+      document.getElementById('navLbl-blocker').textContent = isVi ? 'Khóa App' : 'App Lock';
+      document.getElementById('navLbl-workout').textContent = isVi ? 'Tập AI' : 'AI Move';
+      document.getElementById('navLbl-rpg').textContent = isVi ? 'Nhân Vật' : 'Hero OS';
+      document.getElementById('navLbl-quests').textContent = isVi ? 'Nhiệm Vụ' : 'Quests';
+      document.getElementById('navLbl-stats').textContent = isVi ? 'Thống Kê' : 'Stats';
+
+      // Duration buttons (15, 30, 60, 120)
+      [15, 30, 60, 120].forEach(d => {
+        const btn = document.getElementById('dur-' + d);
+        if (!btn) return;
+        if (state.defaultUnlockMins === d) {
+          btn.className = 'py-2 rounded-xl font-mono-tech text-xs font-bold bg-teal-400 text-slate-950 border border-teal-300 shadow-md shadow-teal-500/20 transition';
+        } else {
+          btn.className = 'py-2 rounded-xl font-mono-tech text-xs font-bold bg-slate-950 text-slate-300 border border-slate-800 hover:border-slate-600 transition';
+        }
+      });
+
+      // Default Reps buttons (10, 15, 20, 30)
+      [10, 15, 20, 30].forEach(r => {
+        const btn = document.getElementById('rep-' + r);
+        if (!btn) return;
+        if (state.defaultTargetReps === r) {
+          btn.className = 'py-2 rounded-xl font-mono-tech text-xs font-bold bg-cyan-400 text-slate-950 border border-cyan-300 shadow-md shadow-cyan-500/20 transition';
+        } else {
+          btn.className = 'py-2 rounded-xl font-mono-tech text-xs font-bold bg-slate-950 text-slate-300 border border-slate-800 hover:border-slate-600 transition';
+        }
+      });
+
+      // Mini Character Card
+      document.getElementById('miniRankBadge').textContent = `LVL ${lvlInfo.level}`;
+      document.getElementById('miniHeroRankName').textContent = `${lvlInfo.rankObj.badge} ${isVi ? lvlInfo.rankObj.titleVi : lvlInfo.rankObj.titleEn}`;
+      document.getElementById('miniXpBar').style.width = `${lvlInfo.pct}%`;
+      document.getElementById('miniXpText').textContent = `${lvlInfo.currentLevelXp} / 500 XP`;
+      document.getElementById('cardTimeBankVal').textContent = isVi ? `${state.timeBankMins} phút` : `${state.timeBankMins} mins`;
+      document.getElementById('miniHeroAvatar').innerHTML = renderHeroSvg(state.equippedSkin, 42, 0);
+
+      // Apps Grid
+      const appsGrid = document.getElementById('appsGridContainer');
+      if (appsGrid) {
+        appsGrid.innerHTML = state.apps.map(app => {
+          const isUnlockedTimer = app.unlockRemainingSec > 0;
+          const badgeClass = isUnlockedTimer
+            ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40'
+            : (app.locked ? 'bg-rose-500/20 text-rose-300 border-rose-500/40' : 'bg-slate-800 text-slate-400 border-slate-700');
+          const badgeText = isUnlockedTimer
+            ? `🔓 ĐANG MỞ: ${formatTimeRemaining(app.unlockRemainingSec)}`
+            : (app.locked ? '🔒 LOCKED' : '🔓 UNLOCKED');
+
+          return `
+            <div class="rounded-2xl bg-slate-900/95 border ${app.locked && !isUnlockedTimer ? 'border-slate-800 hover:border-rose-500/50' : 'border-slate-800'} p-4 flex flex-col justify-between gap-3 transition">
+              <div class="flex items-start justify-between gap-2">
+                <div class="flex items-center gap-3">
+                  <div class="w-11 h-11 rounded-xl bg-slate-950 border border-slate-800 flex items-center justify-center text-2xl">
+                    ${app.icon}
+                  </div>
+                  <div>
+                    <div class="font-bold text-white text-sm">${app.name}</div>
+                    <div class="text-[11px] text-slate-400">${app.category} • Đã chặn: ${app.blocksToday || 0} lần</div>
+                  </div>
+                </div>
+                <button type="button" onclick="toggleAppLock('${app.id}')" class="px-2.5 py-1 rounded-lg text-[10px] font-mono-tech font-bold border ${badgeClass} transition">
+                  ${badgeText}
+                </button>
+              </div>
+
+              <div class="flex items-center gap-2 pt-1">
+                <button type="button" onclick="simulateOpenApp('${app.id}')" class="flex-1 py-2 px-3 rounded-xl ${app.locked && !isUnlockedTimer ? 'bg-rose-500/15 hover:bg-rose-500/25 text-rose-300 border border-rose-500/30' : 'bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-300 border border-emerald-500/30'} text-xs font-bold transition">
+                  ${app.locked && !isUnlockedTimer ? '🚨 Thử Mở App (Kiểm tra Chặn)' : '▶️ Mở Ứng Dụng'}
+                </button>
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+
+      // Tab 2: Workout Context Banner & Exercise Selector
+      const banner = document.getElementById('workoutContextBanner');
+      if (banner) {
+        if (activeUnlockTargetAppId) {
+          const targetApp = state.apps.find(a => a.id === activeUnlockTargetAppId);
+          const ex = EXERCISES.find(e => e.id === state.selectedExercise) || EXERCISES[0];
+          if (targetApp) {
+            document.getElementById('workoutTargetIcon').textContent = targetApp.icon;
+            document.getElementById('workoutModeLabel').textContent = 'INTERCEPT CHALLENGE // MỞ KHÓA ỨNG DỤNG';
+            document.getElementById('workoutTargetTitle').textContent =
+              `Hoàn thành ${workoutState.targetReps} nhịp ${ex.nameVi} để mở khóa ${targetApp.name} trong ${workoutState.rewardMins} phút`;
+          }
+        } else {
+          document.getElementById('workoutTargetIcon').textContent = '⚡';
+          document.getElementById('workoutModeLabel').textContent = 'FREE WORKOUT // TẬP LUYỆN TỰ DO TÍCH GIỜ & XP';
+          document.getElementById('workoutTargetTitle').textContent =
+            `Mọi nhịp tập sẽ cộng +${workoutState.rewardMins} phút vào Quỹ Thời Gian (Time Bank), XP & Xu Hành Động`;
+        }
+      }
+
+      const exGrid = document.getElementById('exerciseSelectorGrid');
+      if (exGrid) {
+        exGrid.innerHTML = EXERCISES.map(ex => {
+          const active = state.selectedExercise === ex.id;
+          return `
+            <button type="button" onclick="selectExercise('${ex.id}')" class="text-left p-3.5 rounded-2xl border transition ${active ? 'bg-teal-500/15 border-teal-400 shadow-lg shadow-teal-500/10' : 'bg-slate-900 border-slate-800 hover:border-slate-700'}">
+              <div class="flex items-center justify-between">
+                <span class="text-2xl">${ex.icon}</span>
+                <span class="text-[10px] font-mono-tech px-2 py-0.5 rounded bg-slate-950 text-teal-300 border border-slate-800">+${ex.xpPerRep} XP/nhịp</span>
+              </div>
+              <div class="font-bold text-white text-sm mt-2">${isVi ? ex.nameVi : ex.nameEn}</div>
+              <div class="text-[11px] text-slate-400 mt-0.5">${isVi ? ex.muscleVi : ex.muscleEn}</div>
+            </button>
+          `;
+        }).join('');
+      }
+
+      // Detection mode buttons
+      ['camera', 'cadence', 'tap'].forEach(m => {
+        const b = document.getElementById('modeBtn-' + m);
+        if (!b) return;
+        if (state.detectionMode === m) {
+          b.className = 'px-3 py-1.5 rounded-lg text-xs font-bold bg-teal-400 text-slate-950 transition';
+        } else {
+          b.className = 'px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-900 text-slate-300 hover:bg-slate-800 border border-slate-700 transition';
+        }
+      });
+
+      const currentEx = EXERCISES.find(e => e.id === state.selectedExercise) || EXERCISES[0];
+      const curExTitle = document.getElementById('currentExerciseTitle');
+      if (curExTitle) curExTitle.textContent = (isVi ? currentEx.nameVi : currentEx.nameEn).toUpperCase();
+
+      const startBtnText = document.getElementById('startSessionText');
+      const startBtnIcon = document.getElementById('startSessionIcon');
+      if (startBtnText && startBtnIcon) {
+        startBtnIcon.textContent = workoutState.sessionActive ? '⏸️' : '▶️';
+        startBtnText.textContent = workoutState.sessionActive ? 'Tạm Dừng AI' : 'Bắt Đầu Tập AI';
+      }
+
+      renderWorkoutCounterUI();
+
+      // Tab 3: Life RPG Character & Skins
+      document.getElementById('rpgHeroName').textContent = `${lvlInfo.rankObj.badge} ${isVi ? lvlInfo.rankObj.titleVi : lvlInfo.rankObj.titleEn}`;
+      document.getElementById('rpgLevelBadge').textContent = `LEVEL ${lvlInfo.level}`;
+      document.getElementById('rpgXpProgressText').textContent = `${lvlInfo.currentLevelXp} / 500 XP`;
+      document.getElementById('rpgXpBar').style.width = `${lvlInfo.pct}%`;
+
+      const eqSkinObj = HERO_SKINS.find(s => s.id === state.equippedSkin) || HERO_SKINS[0];
+      document.getElementById('equippedSkinBadge').textContent = `Trang phục: ${eqSkinObj.name}`;
+      document.getElementById('heroStageSvgContainer').innerHTML = renderHeroSvg(state.equippedSkin, 165, 0);
+
+      // Character dynamic stats
+      document.getElementById('statStrVal').textContent = String(20 + Math.floor((state.exerciseCounts.pushups || 0) / 3));
+      document.getElementById('statStaVal').textContent = String(22 + Math.floor((state.exerciseCounts.squats || 0) / 3));
+      document.getElementById('statDisVal').textContent = String(25 + state.streakDays * 3 + state.setsCompleted);
+      document.getElementById('statFocVal').textContent = String(24 + state.totalIntercepts * 2);
+
+      // Hero Skins Grid
+      const skinsGrid = document.getElementById('skinsGridContainer');
+      if (skinsGrid) {
+        skinsGrid.innerHTML = HERO_SKINS.map(skin => {
+          const owned = state.ownedSkins.includes(skin.id);
+          const equipped = state.equippedSkin === skin.id;
+          return `
+            <div class="rounded-2xl bg-slate-950 border ${equipped ? 'border-teal-400 neon-glow' : 'border-slate-800'} p-3.5 flex flex-col justify-between items-center text-center">
+              <div class="w-24 h-24 flex items-center justify-center">
+                ${renderHeroSvg(skin.id, 92, 0)}
+              </div>
+              <div class="mt-2">
+                <div class="font-bold text-white text-sm">${skin.name}</div>
+                <div class="text-[11px] text-slate-400 mt-0.5 line-clamp-2">${isVi ? skin.descVi : skin.descEn}</div>
+              </div>
+              <button type="button" onclick="buyOrEquipSkin('${skin.id}')" class="w-full mt-3 py-2 px-3 rounded-xl font-mono-tech text-xs font-bold transition ${
+                equipped
+                  ? 'bg-teal-500/20 text-teal-300 border border-teal-500/40'
+                  : (owned ? 'bg-slate-800 hover:bg-slate-700 text-white' : 'bg-amber-500 hover:bg-amber-400 text-slate-950')
+              }">
+                ${equipped ? '✓ ĐANG TRANG BỊ' : (owned ? 'TRANG BỊ NGAY' : `🔓 MỞ KHÓA (${skin.price} XU)`)}
+              </button>
+            </div>
+          `;
+        }).join('');
+      }
+
+      // Ranks Ladder
+      const ranksContainer = document.getElementById('ranksLadderContainer');
+      if (ranksContainer) {
+        ranksContainer.innerHTML = RANKS.map(r => {
+          const unlocked = lvlInfo.level >= r.minLvl;
+          return `
+            <div class="p-3 rounded-xl border ${unlocked ? 'bg-slate-950 border-teal-500/40' : 'bg-slate-950/40 border-slate-800 opacity-60'}">
+              <div class="flex items-center justify-between text-xs font-mono-tech">
+                <span>${r.badge} LVL ${r.minLvl}+</span>
+                <span class="${unlocked ? 'text-teal-400' : 'text-slate-500'}">${unlocked ? 'ĐẠT' : 'KHÓA'}</span>
+              </div>
+              <div class="font-bold text-white text-xs mt-1">${isVi ? r.titleVi : r.titleEn}</div>
+            </div>
+          `;
+        }).join('');
+      }
+
+      // Tab 4: Quests & Badges
+      const renderQuestList = (list, isWeekly) => list.map(q => {
+        const pct = Math.min(100, Math.round((q.current / q.target) * 100));
+        const ready = q.current >= q.target && !q.claimed;
+        return `
+          <div class="p-4 rounded-2xl bg-slate-950 border ${ready ? 'border-teal-400' : 'border-slate-800'} space-y-2.5">
+            <div class="flex items-start justify-between gap-2">
+              <div class="font-bold text-white text-xs sm:text-sm">${isVi ? q.titleVi : q.titleEn}</div>
+              <span class="shrink-0 text-[11px] font-mono-tech text-amber-300 bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/30">
+                +${q.xp} XP • +${q.coins} Xu
+              </span>
+            </div>
+            <div class="w-full h-2.5 rounded-full bg-slate-800 overflow-hidden">
+              <div class="h-full bg-gradient-to-r from-teal-400 to-emerald-400" style="width: ${pct}%"></div>
+            </div>
+            <div class="flex items-center justify-between text-xs font-mono-tech">
+              <span class="text-slate-400">Tiến độ: ${q.current} / ${q.target} (${pct}%)</span>
+              ${
+                q.claimed
+                  ? '<span class="text-emerald-400 font-bold">✓ ĐÃ NHẬN THƯỞNG</span>'
+                  : (ready
+                      ? `<button type="button" onclick="claimQuestReward('${q.id}', ${isWeekly})" class="px-3 py-1 rounded-lg bg-teal-400 text-slate-950 font-black">🎁 Nhận Thưởng</button>`
+                      : '<span class="text-slate-500">Đang thực hiện</span>')
+              }
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      const dqContainer = document.getElementById('dailyQuestsContainer');
+      if (dqContainer) dqContainer.innerHTML = renderQuestList(state.dailyQuests, false);
+
+      const wqContainer = document.getElementById('weeklyQuestsContainer');
+      if (wqContainer) wqContainer.innerHTML = renderQuestList(state.weeklyQuests, true);
+
+      const badges = [
+        { icon: '🔥', name: 'Khởi Đầu Kỷ Luật', desc: 'Hoàn thành hiệp tập đầu tiên', done: state.setsCompleted >= 1 },
+        { icon: '💯', name: 'Câu Lạc Bộ 100 Nhịp', desc: 'Đạt tổng cộng 100 nhịp tập', done: state.totalReps >= 100 },
+        { icon: '🛡️', name: 'Kẻ Hủy Diệt Cuộn Vô Thức', desc: 'Chặn 10 lần mở app theo quán tính', done: state.totalIntercepts >= 10 },
+        { icon: '⚡', name: 'Chuỗi 5 Ngày Thép', desc: 'Duy trì tập luyện 5 ngày liên tiếp', done: state.streakDays >= 5 },
+        { icon: '🏋️', name: 'Chiến Binh Toàn Diện', desc: 'Tập đủ cả 4 bài: Hít đất, Squat, Sit-up, Lunge', done: Object.values(state.exerciseCounts).every(v => v >= 10) },
+        { icon: '👑', name: 'Sưu Tầm Giáp Anh Hùng', desc: 'Mở khóa từ 2 trang phục trở lên', done: state.ownedSkins.length >= 2 },
+        { icon: '⏱️', name: 'Tỷ Phú Thời Gian', desc: 'Kiếm được hơn 120 phút mở khóa', done: state.totalEarnedMins >= 120 },
+        { icon: '🧬', name: 'Cấp Độ Thăng Hoa', desc: 'Đạt Nhân vật Level 3 trở lên', done: lvlInfo.level >= 3 }
+      ];
+      const badgesGrid = document.getElementById('badgesGridContainer');
+      if (badgesGrid) {
+        badgesGrid.innerHTML = badges.map(b => `
+          <div class="p-3.5 rounded-2xl border ${b.done ? 'bg-slate-950 border-amber-500/40' : 'bg-slate-950/40 border-slate-800 opacity-50'} text-center">
+            <div class="text-3xl">${b.icon}</div>
+            <div class="font-bold text-white text-xs mt-1.5">${b.name}</div>
+            <div class="text-[11px] text-slate-400 mt-0.5">${b.desc}</div>
+            <div class="mt-2 text-[10px] font-mono-tech ${b.done ? 'text-amber-300 font-bold' : 'text-slate-500'}">
+              ${b.done ? '★ ĐÃ ĐẠT' : 'CHƯA MỞ'}
+            </div>
+          </div>
+        `).join('');
+      }
+
+      // Tab 5: Detailed Stats
+      document.getElementById('statTotalReps').textContent = String(state.totalReps);
+      document.getElementById('statTodayReps').textContent = String(state.todayReps);
+      document.getElementById('statEarnedMins').textContent = `${state.totalEarnedMins}p`;
+      document.getElementById('statIntercepts').textContent = String(state.totalIntercepts);
+      document.getElementById('statTotalCalories').textContent = `${state.totalCalories} kcal`;
+      document.getElementById('statSetsCompleted').textContent = String(state.setsCompleted);
+      document.getElementById('statStreakDays').textContent = `${state.streakDays} Ngày`;
+
+      const breakdownEl = document.getElementById('exerciseBreakdownList');
+      if (breakdownEl) {
+        const total = Math.max(1, state.totalReps);
+        breakdownEl.innerHTML = EXERCISES.map(ex => {
+          const count = state.exerciseCounts[ex.id] || 0;
+          const pct = Math.min(100, Math.round((count / total) * 100));
+          return `
+            <div>
+              <div class="flex justify-between text-xs mb-1">
+                <span class="font-semibold text-white">${ex.icon} ${isVi ? ex.nameVi : ex.nameEn}</span>
+                <span class="font-mono-tech text-teal-300">${count} nhịp (${pct}%)</span>
+              </div>
+              <div class="w-full h-2 rounded-full bg-slate-800 overflow-hidden">
+                <div class="h-full bg-teal-400" style="width: ${pct}%"></div>
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+
+      const logsEl = document.getElementById('activityLogContainer');
+      if (logsEl) {
+        logsEl.innerHTML = state.logs.map(l => `
+          <div class="p-2.5 rounded-xl bg-slate-950 border border-slate-800 flex items-center justify-between gap-2 text-xs">
+            <span class="text-slate-200">${l.text}</span>
+            <span class="shrink-0 font-mono-tech text-[11px] text-slate-400">${l.time}</span>
+          </div>
+        `).join('');
+      }
+    }
+
+    // =========================================================================
+    // TIMERS & INITIALIZATION
+    // =========================================================================
+    let mainLoopId = null;
+    let secondTimerId = null;
+
+    window.onload = function() {
+      applyTheme();
+      switchTab(state.activeTab || 'blocker');
+
+      // DeviceMotion Accelerometer Support for mobile devices
+      if (window.DeviceMotionEvent) {
+        window.addEventListener('devicemotion', function(ev) {
+          if (state.detectionMode !== 'cadence' || !workoutState.sessionActive) return;
+          const acc = ev.accelerationIncludingGravity;
+          if (!acc) return;
+          const mag = Math.sqrt((acc.x || 0) ** 2 + (acc.y || 0) ** 2 + (acc.z || 0) ** 2);
+          if (mag > 14.5 && workoutState.phase === 'UP') {
+            workoutState.phase = 'DOWN';
+          } else if (mag < 10.5 && workoutState.phase === 'DOWN') {
+            workoutState.phase = 'UP';
+            triggerManualRep();
+          }
+        });
+      }
+
+      // 1-second interval for active unlocked app countdowns & workout timer
+      if (secondTimerId) clearInterval(secondTimerId);
+      secondTimerId = setInterval(() => {
+        let changed = false;
+        state.apps.forEach(app => {
+          if (app.unlockRemainingSec > 0) {
+            app.unlockRemainingSec -= 1;
+            changed = true;
+            if (app.unlockRemainingSec === 0) {
+              showToast(`Hết giờ mở khóa ${app.name}! Ứng dụng đã tự động khóa lại.`, '🔒');
+            }
+          }
+        });
+        if (workoutState.sessionActive) {
+          workoutState.elapsedSec += 1;
+          const tEl = document.getElementById('workoutTimerDisplay');
+          if (tEl) tEl.textContent = formatTimeRemaining(workoutState.elapsedSec);
+        }
+        if (changed) {
+          saveState();
+          if (state.activeTab === 'blocker') renderAll();
+        }
+      }, 1000);
+
+      // 30fps Vision & Skeleton Canvas Loop
+      function animateVision() {
+        if (state.activeTab === 'workout') {
+          drawVisionCanvas();
+        }
+        mainLoopId = requestAnimationFrame(animateVision);
+      }
+      if (mainLoopId) cancelAnimationFrame(mainLoopId);
+      mainLoopId = requestAnimationFrame(animateVision);
+    };
+  </script>
+</body>
+</html>
